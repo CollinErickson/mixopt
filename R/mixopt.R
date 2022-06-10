@@ -33,6 +33,10 @@ mixopt_coorddesc <- function(par, fn, gr=NULL, ..., method,
     cat("par are verified\n")
   }
   npar <- length(par)
+  if (track_par) {
+    tracked_pars <- list()
+    tracked_vals <- numeric(0)
+  }
 
   par_par <- lapply(par, function(p) {p$start})
   par_val <- Inf
@@ -51,7 +55,13 @@ mixopt_coorddesc <- function(par, fn, gr=NULL, ..., method,
         # browser()
         x <- par_par
         x[[ipar]] <- pari
-        fn(x)
+        fnx <- fn(x)
+
+        if (track_par) {
+          tracked_pars[[length(tracked_pars) + 1]] <<- x
+          tracked_vals[[length(tracked_vals) + 1]] <<- fnx
+        }
+        fnx
       }
       if ("mixopt_par_cts" %in% class(par[[ipar]])) {
         # Optimize over 1-D
@@ -101,5 +111,9 @@ mixopt_coorddesc <- function(par, fn, gr=NULL, ..., method,
 
   outlist <- list(par=par_par,
                   val=par_val)
+  if (track_par) {
+    outlist$track_par <- tracked_pars
+    outlist$track_val <- tracked_vals
+  }
   outlist
 }

@@ -9,7 +9,7 @@
 #' @examples
 #' verify_par(
 #'   list(
-#'     list("cts", c(2,8), 6)
+#'     par_cts(2, 8, 6)
 #'   )
 #' )
 verify_par <- function(par) {
@@ -80,10 +80,10 @@ par_cts <- function(lower, upper, start=NULL) {
   out
 }
 
-#' Title
+#' Ordered variable parameter
 #'
-#' @param values
-#' @param start
+#' @param values Values the parameter can take, in order
+#' @param start Start parameter for optimization
 #'
 #' @return mixopt_par list
 #' @export
@@ -97,7 +97,12 @@ par_cts <- function(lower, upper, start=NULL) {
 #' par_ordered(list('a', 2, 'c', sin))
 par_ordered <- function(values, start=NULL) {
   stopifnot(length(values) >= 1)
-  stopifnot(anyDuplicated(values))
+  # stopifnot(anyDuplicated(values))
+  if(anyDuplicated(values) > .5) {
+    # browser()
+    print(values)
+    print("par_unordered has duplicated values")
+  }
   if (is.null(start)) {
     start <- values[[ceiling(length(values) / 2)]]
   }
@@ -120,7 +125,11 @@ par_ordered <- function(values, start=NULL) {
 #' par_unordered(letters)
 par_unordered <- function(values, start=NULL) {
   stopifnot(length(values) >= 1)
-  stopifnot(anyDuplicated(values))
+  if(anyDuplicated(values) > .5) {
+    # browser()
+    print(values)
+    print("par_unordered has duplicated values")
+  }
   if (is.null(start)) {
     start <- values[[sample(1:length(values), 1)]]
   }

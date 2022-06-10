@@ -18,7 +18,7 @@ Verify parameters
 \examples{
 verify_par(
   list(
-    list("cts", c(2,8), 6)
+    par_cts(2, 8, 6)
   )
 )
 }

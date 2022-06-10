@@ -2,7 +2,7 @@
 % Please edit documentation in R/mixopt.R
 \name{mixopt_coorddesc}
 \alias{mixopt_coorddesc}
-\title{Title}
+\title{Mixed variable optimization using coordinate descent}
 \usage{
 mixopt_coorddesc(
   par,
@@ -10,20 +10,34 @@ mixopt_coorddesc(
   gr = NULL,
   ...,
   method,
-  max_iter = 100,
+  maxiter = 100,
   verbose = 10,
-  maxiter = 10,
   track_par = FALSE
 )
 }
 \arguments{
-\item{verbose}{}
+\item{par}{List of parameters}
+
+\item{fn}{Function to evaluate}
+
+\item{gr}{Gradient of fn}
+
+\item{...}{Additional args}
+
+\item{method}{Optimization method}
+
+\item{maxiter}{Maximum number of outer iterations}
+
+\item{verbose}{How much to print. 0 is none, 1 is standard,
+2 is some, 3 is a lot, etc.}
+
+\item{track_par}{Should it track the parameters evaluated?}
 }
 \value{
-
+List
 }
 \description{
-Title
+Mixed variable optimization using coordinate descent
 }
 \examples{
 mixopt_coorddesc(par=list(par_cts(2,8)), fn=function(x) {(4.5-x[[1]])^2})

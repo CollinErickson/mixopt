@@ -2,18 +2,20 @@
 % Please edit documentation in R/par.R
 \name{par_ordered}
 \alias{par_ordered}
-\title{Title}
+\title{Ordered variable parameter}
 \usage{
 par_ordered(values, start = NULL)
 }
 \arguments{
-\item{start}{}
+\item{values}{Values the parameter can take, in order}
+
+\item{start}{Start parameter for optimization}
 }
 \value{
 mixopt_par list
 }
 \description{
-Title
+Ordered variable parameter
 }
 \examples{
 par_ordered(c(1,3,5))

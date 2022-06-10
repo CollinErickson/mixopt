@@ -4,17 +4,20 @@ mixopt <- function(par, fn, gr=NULL, ...,
   return(mixopt_coorddesc(par=par, gr=gr, method=method, ...))
 }
 
-#' Title
+#' Mixed variable optimization using coordinate descent
 #'
-#' @param par
-#' @param fn
-#' @param gr
-#' @param ...
-#' @param method
-#' @param max_iter
-#' @param verbose
+#' @param par List of parameters
+#' @param fn Function to evaluate
+#' @param gr Gradient of fn
+#' @param ... Additional args
+#' @param method Optimization method
+#' @param maxiter Maximum number of outer iterations
+#' @param verbose How much to print. 0 is none, 1 is standard,
+#' 2 is some, 3 is a lot, etc.
+#' @param track_par Should it track the parameters evaluated?
+#' @importFrom stats optim
 #'
-#' @return
+#' @return List
 #' @export
 #'
 #' @examples
@@ -22,7 +25,7 @@ mixopt <- function(par, fn, gr=NULL, ...,
 #' mixopt_coorddesc(par=list(par_cts(2,8), par_unordered(letters[1:6])),
 #'                  fn=function(x) {ifelse(x[[2]] == 'b', -1, 0) +(4.5-x[[1]])^2})
 mixopt_coorddesc <- function(par, fn, gr=NULL, ..., method,
-                             max_iter=100, verbose=10, maxiter=10,
+                             maxiter=100, verbose=10,
                              track_par=FALSE) {
   # print(par)
   verify_par(par)

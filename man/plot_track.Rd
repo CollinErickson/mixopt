@@ -17,7 +17,7 @@ Plot the traked parameters from an optimization
 }
 \examples{
 f8 <- function(x) {-(x[[1]]+x[[2]]) + .1*(x[[1]] - x[[2]])^2}
-# ContourFunctions::cf_func(f8, xlim=c(0,100), ylim=c(0,100))
+ContourFunctions::cf_func(f8, xlim=c(0,100), ylim=c(0,100))
 m8 <- mixopt_coorddesc(par=list(mopar_ordered(0:100), mopar_ordered(0:100)),
                        fn=f8, track = TRUE)
 plot_track(m8)

@@ -78,6 +78,9 @@ mopar_cts <- function(lower, upper, start=NULL) {
   out <- list(lower=lower,
               upper=upper,
               start=start)
+  out$sample <- function(n) {
+    runif(n, lower, upper)
+  }
   class(out) <- c("mixopt_par", "mixopt_par_cts", class(out))
   out
 }
@@ -110,6 +113,13 @@ mopar_ordered <- function(values, start=NULL) {
   }
   stopifnot(start %in% values)
   out <- list(values=values, start=start)
+  out$sample <- function(n) {
+    if (length(values) == 1) {
+      rep(values, n)
+    } else {
+      sample(values, n)
+    }
+  }
   class(out) <- c("mixopt_par", "mixopt_par_ordered", class(out))
   out
 }
@@ -137,6 +147,13 @@ mopar_unordered <- function(values, start=NULL) {
   }
   stopifnot(start %in% values)
   out <- list(values=values, start=start)
+  out$sample <- function(n) {
+    if (length(values) == 1) {
+      rep(values, n)
+    } else {
+      sample(values, n)
+    }
+  }
   class(out) <- c("mixopt_par", "mixopt_par_unordered", class(out))
   out
 }

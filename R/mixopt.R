@@ -4,7 +4,22 @@ mixopt <- function(par, fn, gr=NULL, ...,
   return(mixopt_coorddesc(par=par, gr=gr, method=method, ...))
 }
 
-# mixopt_multistart <-
+mixopt_multistart <- function(par, fn, gr=NULL, ..., method,
+                              n0=100, n1=3,
+                              maxiter=100, verbose=10,
+                              track=FALSE) {
+  # Start by evaluating n0 points, pick them randomly
+  stopifnot(is.integer(n0), length(n0) == 1)
+  startpoints <- list()
+  for (i in 1:n0) {
+    # Generate start points
+  }
+
+  # Run local optimizer over the n1 best
+
+  # Return best
+
+}
 
 #' Mixed variable optimization using coordinate descent
 #'

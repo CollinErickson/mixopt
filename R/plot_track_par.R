@@ -8,7 +8,7 @@
 #' @examples
 #' 1
 plot_track_par <- function(out) {
-  browser()
+  # browser()
   stopifnot(!is.null(out$track_par))
   dflist <- list()
   dflist$val <- out$track_val
@@ -27,7 +27,7 @@ plot_track_par <- function(out) {
 
   # str(dflist)
   df <- as.data.frame(dflist)
-  browser()
+  # browser()
   # dftall <- tidyr::pivot_longer(cols=colnames(df))
   # ggplot2::ggplot(df)
   # gridExtra::grid.arrange(plots)

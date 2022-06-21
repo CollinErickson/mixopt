@@ -162,5 +162,15 @@ mixopt_coorddesc <- function(par, fn, gr=NULL, ..., method,
     outlist$track_par <- tracked_pars
     outlist$track_val <- tracked_vals
   }
+  # Add class
+  class(outlist) <- c("mixopt_output_list", class(outlist))
   outlist
+}
+
+print.mixopt_output_list <- function(x, ...) {
+  # browser()
+  print('printing new thing')
+  x2 <- x[setdiff(names(x), c("track_par", "track_val"))]
+  class(x2) <- setdiff(class(x2), "mixopt_output_list")
+  print(x2)
 }

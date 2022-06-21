@@ -6,23 +6,36 @@
 #' @export
 #'
 #' @examples
-#' 1
-plot_track_par <- function(out) {
+#' f8 <- function(x) {-(x[[1]]+x[[2]]) + .1*(x[[1]] - x[[2]])^2}
+#' # ContourFunctions::cf_func(f8, xlim=c(0,100), ylim=c(0,100))
+#' m8 <- mixopt_coorddesc(par=list(mopar_ordered(0:100), mopar_ordered(0:100)),
+#'                        fn=f8, track = TRUE)
+#' plot_track(m8)
+#' \dontrun{
+#' ContourFunctions::cf_func(f8, xlim=c(0,100), ylim=c(0,100),
+#'                           # pts=matrix(unlist(m8$track$par), ncol=2, byrow=TRUE),
+#'                           gg = TRUE) +
+#'   geom_point(data=as.data.frame(matrix(unlist(m8$track$par), ncol=2, byrow=TRUE)) %>%
+#'                bind_cols(newbest=m8$track$newbest),
+#'              aes(V1, V2, color=newbest))
+#' }
+plot_track <- function(out) {
   # browser()
-  stopifnot(!is.null(out$track_par))
+  stopifnot(!is.null(out$track))
   dflist <- list()
-  dflist$val <- out$track_val
+  dflist$val <- out$track$val
   dflist$iter <- 1:length(dflist$val)
+  dflist$newbest <- out$track$newbest
   plots <- list()
-  for (i in 1:length(out$track_par[[1]])) {
-    dflist[[paste0("par", i)]] <- sapply(out$track_par, function(x) {x[[i]]})
+  for (i in 1:length(out$track$par[[1]])) {
+    dflist[[paste0("par", i)]] <- sapply(out$track$par, function(x) {x[[i]]})
     plots[[length(plots) + 1]] <- ggplot2::ggplot(as.data.frame(dflist),
-                                                  ggplot2::aes_string("iter", paste0("par", i))) +
+                                                  ggplot2::aes_string("iter", paste0("par", i), color="newbest")) +
       ggplot2::geom_point()
   }
   # Add val
   plots[[length(plots) + 1]] <- ggplot2::ggplot(as.data.frame(dflist),
-                                                ggplot2::aes_string("iter", "val")) +
+                                                ggplot2::aes_string("iter", "val", color="newbest")) +
     ggplot2::geom_point()
 
   # str(dflist)
@@ -38,6 +51,6 @@ if (F) {
                                   mopar_unordered(letters[1:6]),
                                   mopar_ordered(1:10)),
                          fn=function(x) {ifelse(x[[2]] == 'b', -1, 0) +(4.5-x[[1]])^2 + x[[1]]*(log(x[[3]])-1)^2},
-                         track_par = T)
-  plot_track_par(pt)
+                         track = T)
+  plot_track(pt)
 }

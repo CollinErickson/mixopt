@@ -141,7 +141,7 @@ mopar_unordered <- function(values, start=NULL) {
   out
 }
 
-
+#' @export
 c.mixopt_par <- function(..., recursive=FALSE) {
   out <- list()
   dots <- list(...)

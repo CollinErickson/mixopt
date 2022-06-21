@@ -1,8 +1,10 @@
 mixopt <- function(par, fn, gr=NULL, ...,
                    method,
-                   track_par) {
+                   track) {
   return(mixopt_coorddesc(par=par, gr=gr, method=method, ...))
 }
+
+# mixopt_multistart <-
 
 #' Mixed variable optimization using coordinate descent
 #'
@@ -14,7 +16,7 @@ mixopt <- function(par, fn, gr=NULL, ...,
 #' @param maxiter Maximum number of outer iterations
 #' @param verbose How much to print. 0 is none, 1 is standard,
 #' 2 is some, 3 is a lot, etc.
-#' @param track_par Should it track the parameters evaluated?
+#' @param track Should it track the parameters evaluated and value?
 #' @importFrom stats optim
 #'
 #' @return List
@@ -26,22 +28,25 @@ mixopt <- function(par, fn, gr=NULL, ...,
 #'                  fn=function(x) {ifelse(x[[2]] == 'b', -1, 0) +(4.5-x[[1]])^2})
 mixopt_coorddesc <- function(par, fn, gr=NULL, ..., method,
                              maxiter=100, verbose=10,
-                             track_par=FALSE) {
+                             track=FALSE) {
   # print(par)
   verify_par(par)
   if (verbose>=2) {
     cat("par are verified\n")
   }
   npar <- length(par)
-  if (track_par) {
+  if (track) {
     tracked_pars <- list()
     tracked_vals <- numeric(0)
+    tracked_newbest <- logical(0)
   }
 
   par_par <- lapply(par, function(p) {p$start})
   par_val <- Inf
   stopifnot(length(par_par) == npar)
   iter <- 0
+  counts_function <- 0
+  starttime <- Sys.time()
   # Iterate with while loop ----
   # An iteration goes over each variable separately
   while(iter <= maxiter) {
@@ -52,15 +57,18 @@ mixopt_coorddesc <- function(par, fn, gr=NULL, ..., method,
     # browser()
     # Loop over pars ----
     for (ipar in 1:npar) {
+      best_val_sofar <- par_val
       fnipar <- function(pari) {
         # browser()
         x <- par_par
         x[[ipar]] <- pari
         fnx <- fn(x)
 
-        if (track_par) {
+        counts_function <<- counts_function + 1
+        if (track) {
           tracked_pars[[length(tracked_pars) + 1]] <<- x
           tracked_vals[[length(tracked_vals) + 1]] <<- fnx
+          tracked_newbest[[length(tracked_newbest) + 1]] <<- (fnx < best_val_sofar)
         }
         fnx
       }
@@ -155,22 +163,33 @@ mixopt_coorddesc <- function(par, fn, gr=NULL, ..., method,
       break
     }
   }
+  endtime <- Sys.time()
 
   outlist <- list(par=par_par,
                   val=par_val)
-  if (track_par) {
-    outlist$track_par <- tracked_pars
-    outlist$track_val <- tracked_vals
+  if (track) {
+    # outlist$track_par <- tracked_pars
+    # outlist$track_val <- tracked_vals
+    # outlist$track_newbest <- tracked_newbest
+    outlist$track <- list(
+      par=tracked_pars,
+      val=tracked_vals,
+      newbest=tracked_newbest
+    )
   }
+  outlist$counts <- c("function"=counts_function, "gradient"=NA)
+  outlist$runtime <- endtime - starttime
   # Add class
   class(outlist) <- c("mixopt_output_list", class(outlist))
   outlist
 }
 
+#' @export
 print.mixopt_output_list <- function(x, ...) {
   # browser()
-  print('printing new thing')
-  x2 <- x[setdiff(names(x), c("track_par", "track_val"))]
+  # print('printing new thing')
+  # x2 <- x[setdiff(names(x), c("track_par", "track_val"))]
+  x2 <- x[setdiff(names(x), c("track"))]
   class(x2) <- setdiff(class(x2), "mixopt_output_list")
   print(x2)
 }

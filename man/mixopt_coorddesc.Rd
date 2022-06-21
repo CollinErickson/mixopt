@@ -12,7 +12,7 @@ mixopt_coorddesc(
   method,
   maxiter = 100,
   verbose = 10,
-  track_par = FALSE
+  track = FALSE
 )
 }
 \arguments{
@@ -31,7 +31,7 @@ mixopt_coorddesc(
 \item{verbose}{How much to print. 0 is none, 1 is standard,
 2 is some, 3 is a lot, etc.}
 
-\item{track_par}{Should it track the parameters evaluated?}
+\item{track}{Should it track the parameters evaluated and value?}
 }
 \value{
 List

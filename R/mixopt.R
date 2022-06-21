@@ -21,8 +21,8 @@ mixopt <- function(par, fn, gr=NULL, ...,
 #' @export
 #'
 #' @examples
-#' mixopt_coorddesc(par=list(par_cts(2,8)), fn=function(x) {(4.5-x[[1]])^2})
-#' mixopt_coorddesc(par=list(par_cts(2,8), par_unordered(letters[1:6])),
+#' mixopt_coorddesc(par=list(mopar_cts(2,8)), fn=function(x) {(4.5-x[[1]])^2})
+#' mixopt_coorddesc(par=list(mopar_cts(2,8), mopar_unordered(letters[1:6])),
 #'                  fn=function(x) {ifelse(x[[2]] == 'b', -1, 0) +(4.5-x[[1]])^2})
 mixopt_coorddesc <- function(par, fn, gr=NULL, ..., method,
                              maxiter=100, verbose=10,
@@ -42,6 +42,7 @@ mixopt_coorddesc <- function(par, fn, gr=NULL, ..., method,
   par_val <- Inf
   stopifnot(length(par_par) == npar)
   iter <- 0
+  # Iterate with while loop ----
   # An iteration goes over each variable separately
   while(iter <= maxiter) {
     iter <- iter + 1
@@ -49,7 +50,7 @@ mixopt_coorddesc <- function(par, fn, gr=NULL, ..., method,
     cat("Starting iter", iter, ", val is", par_val, "", "\n")
     print(par_par)
     # browser()
-    # Loop over parameters/variables
+    # Loop over pars ----
     for (ipar in 1:npar) {
       fnipar <- function(pari) {
         # browser()
@@ -64,6 +65,7 @@ mixopt_coorddesc <- function(par, fn, gr=NULL, ..., method,
         fnx
       }
       if ("mixopt_par_cts" %in% class(par[[ipar]])) {
+        # cts ----
         # Optimize over 1-D
         optout <- optim(par=par_par[[ipar]], fn=fnipar,
                         method="Brent",
@@ -73,14 +75,59 @@ mixopt_coorddesc <- function(par, fn, gr=NULL, ..., method,
         par_par[[ipar]] <- optout$par
         par_val <- optout$val
       } else if ("mixopt_par_ordered" %in% class(par[[ipar]])) {
-        browser()
-        # Get index of current value
-        curind <- which()
-
-
-        par_par[[ipar]] <- optout$par
-        par_val <- optout$val
+        ## ordered ----
+        # browser()
+        if (length(par[[ipar]]$values) > .5) {
+          # Get index of current value
+          startind <- which(par_par[[ipar]] == par[[ipar]]$values)
+          stopifnot(length(startind) == 1)
+          # Try moving in one direction
+          # dir <- sample(c(-1, 1), 1)
+          curind <- startind #+ 1
+          # Check left and right
+          if (curind > 1.5) {
+            fnleft <- fnipar(par[[ipar]]$values[curind - 1])
+          } else {
+            fnleft <- Inf
+          }
+          if (curind < length(par[[ipar]]$values) - .5) {
+            fnright <- fnipar(par[[ipar]]$values[curind + 1])
+          } else {
+            fnright <- Inf
+          }
+          # Go the better of left/right
+          if (fnleft <= fnright && fnleft < par_val) {
+            par_par[[ipar]] <- par[[ipar]]$values[curind - 1]
+            par_val <- fnleft
+            # Keep going left
+            curind <- curind - 1
+            while (curind > 1.5) {
+              keepleftval <- fnipar(par[[ipar]]$values[curind - 1])
+              if (keepleftval < par_val) {
+                par_par[[ipar]] <- par[[ipar]]$values[curind - 1]
+                par_val <- keepleftval
+                curind <- curind - 1
+              } else {
+                break
+              }
+            }
+          } else if (fnright <= fnleft && fnright < par_val) {
+            # Keep going right
+            curind <- curind + 1
+            while (curind < length(par[[ipar]]$values) - .5) {
+              keeprightval <- fnipar(par[[ipar]]$values[curind + 1])
+              if (keeprightval < par_val) {
+                par_par[[ipar]] <- par[[ipar]]$values[curind + 1]
+                par_val <- keeprightval
+                curind <- curind + 1
+              } else {
+                break
+              }
+            }
+          }
+        }
       } else if ("mixopt_par_unordered" %in% class(par[[ipar]])) {
+        # unordered ----
         # browser()
         # Randomly try other param values
         param_values <- setdiff(par[[ipar]]$values, par_par[[ipar]])

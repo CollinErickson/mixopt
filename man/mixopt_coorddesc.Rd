@@ -40,7 +40,7 @@ List
 Mixed variable optimization using coordinate descent
 }
 \examples{
-mixopt_coorddesc(par=list(par_cts(2,8)), fn=function(x) {(4.5-x[[1]])^2})
-mixopt_coorddesc(par=list(par_cts(2,8), par_unordered(letters[1:6])),
+mixopt_coorddesc(par=list(mopar_cts(2,8)), fn=function(x) {(4.5-x[[1]])^2})
+mixopt_coorddesc(par=list(mopar_cts(2,8), mopar_unordered(letters[1:6])),
                  fn=function(x) {ifelse(x[[2]] == 'b', -1, 0) +(4.5-x[[1]])^2})
 }

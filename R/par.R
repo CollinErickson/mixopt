@@ -9,14 +9,16 @@
 #' @examples
 #' verify_par(
 #'   list(
-#'     par_cts(2, 8, 6)
+#'     mopar_cts(2, 8, 6)
 #'   )
 #' )
 verify_par <- function(par) {
   stopifnot(is.list(par))
   stopifnot(length(par) > .5)
   for (i in 1:length(par)) {
-    # browser()
+    if (!(("mixopt_par" %in% class(par[[i]])))) {
+      browser()
+    }
     stopifnot("mixopt_par" %in% class(par[[i]]))
   }
   # start_par <- list()
@@ -54,9 +56,9 @@ verify_par <- function(par) {
 #' @export
 #'
 #' @examples
-#' par_cts(2,8)
-#' par_cts(2,8,7)
-par_cts <- function(lower, upper, start=NULL) {
+#' mopar_cts(2,8)
+#' mopar_cts(2,8,7)
+mopar_cts <- function(lower, upper, start=NULL) {
   # Verify valid bounds
   stopifnot(is.numeric(lower))
   stopifnot(length(lower) == 1)
@@ -89,19 +91,19 @@ par_cts <- function(lower, upper, start=NULL) {
 #' @export
 #'
 #' @examples
-#' par_ordered(c(1,3,5))
-#' #par_ordered(c(1,1))
-#' par_ordered(c('a','c'))
-#' par_ordered(1:4)
-#' par_ordered(4:1)
-#' par_ordered(list('a', 2, 'c', sin))
-par_ordered <- function(values, start=NULL) {
+#' mopar_ordered(c(1,3,5))
+#' #mopar_ordered(c(1,1))
+#' mopar_ordered(c('a','c'))
+#' mopar_ordered(1:4)
+#' mopar_ordered(4:1)
+#' mopar_ordered(list('a', 2, 'c', sin))
+mopar_ordered <- function(values, start=NULL) {
   stopifnot(length(values) >= 1)
   # stopifnot(anyDuplicated(values))
   if(anyDuplicated(values) > .5) {
     # browser()
     print(values)
-    print("par_unordered has duplicated values")
+    print("mopar_unordered has duplicated values")
   }
   if (is.null(start)) {
     start <- values[[ceiling(length(values) / 2)]]
@@ -121,14 +123,14 @@ par_ordered <- function(values, start=NULL) {
 #' @export
 #'
 #' @examples
-#' par_unordered(c(1,3,9))
-#' par_unordered(letters)
-par_unordered <- function(values, start=NULL) {
+#' mopar_unordered(c(1,3,9))
+#' mopar_unordered(letters)
+mopar_unordered <- function(values, start=NULL) {
   stopifnot(length(values) >= 1)
   if(anyDuplicated(values) > .5) {
     # browser()
     print(values)
-    print("par_unordered has duplicated values")
+    print("mopar_unordered has duplicated values")
   }
   if (is.null(start)) {
     start <- values[[sample(1:length(values), 1)]]

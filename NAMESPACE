@@ -3,6 +3,7 @@
 S3method(c,mixopt_par)
 S3method(print,mixopt_output_list)
 export(mixopt_coorddesc)
+export(mixopt_multistart)
 export(mopar_cts)
 export(mopar_ordered)
 export(mopar_unordered)

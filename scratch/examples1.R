@@ -52,3 +52,16 @@ ContourFunctions::cf_func(f8, xlim=c(0,100), ylim=c(0,100),
   geom_point(data=as.data.frame(matrix(unlist(m8$track$par), ncol=2, byrow=T)) %>%
                bind_cols(newbest=m8$track$newbest),
              aes(V1, V2, color=newbest))
+
+# Zig zag with bottom
+f9 <- function(x) {a=2*(x[[1]]+x[[2]]); b=2*(x[[1]]-x[[2]]+40); ((a-100)^2+12*(b-40)^2)^.3}
+ContourFunctions::cf_func(f9, xlim=c(-50,50), ylim=c(-50,50))
+m9 <- mixopt_coorddesc(par=list(mopar_ordered((-50):50), mopar_ordered((-50):50)),
+                       fn=f9, track = T)
+plot_track(m9)
+ContourFunctions::cf_func(f9, xlim=c(-50,50), ylim=c(-50,50),
+                          # pts=matrix(unlist(m9$track$par), ncol=2, byrow=T),
+                          gg = T) +
+  geom_point(data=as.data.frame(matrix(unlist(m9$track$par), ncol=2, byrow=T)) %>%
+               bind_cols(newbest=m9$track$newbest),
+             aes(V1, V2, color=newbest))

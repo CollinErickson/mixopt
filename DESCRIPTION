@@ -10,8 +10,10 @@ Description: Mixed variable optimization for non-linear functions.
 Suggests:
     ContourFunctions,
     ggplot2,
-    gridExtra
+    gridExtra,
+    testthat (>= 3.0.0)
 License: LGPL (>= 3)
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.1.2
+Config/testthat/edition: 3

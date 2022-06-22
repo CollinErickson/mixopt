@@ -4,21 +4,55 @@ mixopt <- function(par, fn, gr=NULL, ...,
   return(mixopt_coorddesc(par=par, gr=gr, method=method, ...))
 }
 
+#' @export
 mixopt_multistart <- function(par, fn, gr=NULL, ..., method,
                               n0=100, n1=3,
                               maxiter=100, verbose=10,
                               track=FALSE) {
   # Start by evaluating n0 points, pick them randomly
-  stopifnot(is.integer(n0), length(n0) == 1)
+  stopifnot(is.numeric(n0), length(n0) == 1, n0 >= 1,
+            abs(n0 - as.integer(n0)) < 1e-8)
+  stopifnot(is.numeric(n1), length(n1) == 1, n1 >= 1,
+            abs(n1 - as.integer(n1)) < 1e-8)
+  stopifnot(n0 >= n1)
+  browser()
   startpoints <- list()
+  for (ivar in 1:length(par)) {
+    startpoints[[ivar]] <- par[[ivar]]$sample(n0)
+  }
+  startpoints2 <- list()
+  startpointsval <- rep(NaN, n0)
   for (i in 1:n0) {
     # Generate start points
+    startpoints2[[i]] <- lapply(startpoints, function(x) {x[[i]]})
+    startpointsval[[i]] <- fn(startpoints2[[i]])
   }
 
+  browser()
+  # Find best
+  # ranks <- order(order(startpointsval))
+  n0_inds_sorted <- order(startpointsval)
+  n1_inds <- n0_inds_sorted[1:n1]
+
   # Run local optimizer over the n1 best
+  locoptouts <- list()
+  for (i in 1:n1) {
+    # pars_i <-
+    # Set start points
+    for (ivar in 1:length(par)) {
+      par[[ivar]]$start <- startpoints2[[n1_inds[[i]]]][[ivar]]
+    }
 
+    # Run local optimizer
+    locoptouts[[i]] <- mixopt_coorddesc(par=par, fn=fn, gr=gr)
+  }
+
+  n1_vals <- sapply(locoptouts, function(x) {x$val})
+  best_n1_ind <- which.min(n1_vals)[1]
+
+  browser()
   # Return best
-
+  locoptouts[[best_n1_ind]]
 }
 
 #' Mixed variable optimization using coordinate descent

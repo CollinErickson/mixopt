@@ -31,6 +31,23 @@ mixopt <- function(par, fn, gr=NULL,
 #' @param n1 For multistart, number of best starts to optimize with
 #' gradient descent.
 #' @export
+#' @examples
+#' # 2D
+#' library(ggplot2)
+#' library(dplyr)
+#' f6 <- function(x) {-(-x[[1]]*.5*sin(.5*x[[1]])*1 - 1e-2*x[[2]]^2 + .2*x[[1]] - .3*x[[2]])}
+#' ContourFunctions::cf_func(f6, xlim=c(0,100), ylim=c(-100,100))
+#' m6 <- mixopt_coorddesc(par=list(mopar_cts(0,100), mopar_cts(-100,100)),
+#'                        fn=f6, track = TRUE)
+#' plot_track(m6)
+#' ms6 <- mixopt_multistart(par=list(mopar_cts(0,100), mopar_cts(-100,100)),
+#'                          fn=f6, track = TRUE)
+#' plot_track(ms6)
+#' ContourFunctions::cf_func(f6, xlim=c(0,100), ylim=c(-100,100),
+#'                           gg = TRUE) +
+#'   geom_point(data=as.data.frame(matrix(unlist(ms6$track$par), ncol=2, byrow=TRUE)) %>%
+#'                bind_cols(newbest=ms6$track$newbest),
+#'              aes(V1, V2, color=newbest), alpha=.5)
 mixopt_multistart <- function(par, fn, gr=NULL,
                               ..., method,
                               n0=20, n1=2,
@@ -134,7 +151,10 @@ mixopt_multistart <- function(par, fn, gr=NULL,
 #'
 #' @rdname mixopt
 #' @examples
+#' # Simple 1D example
 #' mixopt_coorddesc(par=list(mopar_cts(2,8)), fn=function(x) {(4.5-x[[1]])^2})
+#'
+#' # 2D: one continuous, one factor
 #' mixopt_coorddesc(par=list(mopar_cts(2,8), mopar_unordered(letters[1:6])),
 #'                  fn=function(x) {ifelse(x[[2]] == 'b', -1, 0) +(4.5-x[[1]])^2})
 mixopt_coorddesc <- function(par, fn, gr=NULL, ..., method,
@@ -183,6 +203,8 @@ mixopt_coorddesc <- function(par, fn, gr=NULL, ..., method,
       best_val_sofar_input <- Inf
       tracked_newbest <- TRUE
     }
+  } else {
+    best_val_sofar_input <- Inf
   }
 
   iter <- 0

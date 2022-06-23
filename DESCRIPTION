@@ -9,6 +9,7 @@ Description: Mixed variable optimization for non-linear functions.
     ordered, and unordered.
 Suggests:
     ContourFunctions,
+    dplyr,
     ggplot2,
     gridExtra,
     testthat (>= 3.0.0)

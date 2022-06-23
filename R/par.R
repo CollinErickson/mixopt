@@ -52,6 +52,7 @@ verify_par <- function(par) {
 #' @param upper Upper
 #' @param start Start. Defaults to midpoint if not given.
 #'
+#' @importFrom stats runif
 #' @return mixopt_par list
 #' @export
 #'

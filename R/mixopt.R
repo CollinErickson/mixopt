@@ -1,60 +1,3 @@
-mixopt <- function(par, fn, gr=NULL, ...,
-                   method,
-                   track) {
-  return(mixopt_coorddesc(par=par, gr=gr, method=method, ...))
-}
-
-#' @export
-mixopt_multistart <- function(par, fn, gr=NULL, ..., method,
-                              n0=100, n1=3,
-                              maxiter=100, verbose=10,
-                              track=FALSE) {
-  # Start by evaluating n0 points, pick them randomly
-  stopifnot(is.numeric(n0), length(n0) == 1, n0 >= 1,
-            abs(n0 - as.integer(n0)) < 1e-8)
-  stopifnot(is.numeric(n1), length(n1) == 1, n1 >= 1,
-            abs(n1 - as.integer(n1)) < 1e-8)
-  stopifnot(n0 >= n1)
-  browser()
-  startpoints <- list()
-  for (ivar in 1:length(par)) {
-    startpoints[[ivar]] <- par[[ivar]]$sample(n0)
-  }
-  startpoints2 <- list()
-  startpointsval <- rep(NaN, n0)
-  for (i in 1:n0) {
-    # Generate start points
-    startpoints2[[i]] <- lapply(startpoints, function(x) {x[[i]]})
-    startpointsval[[i]] <- fn(startpoints2[[i]])
-  }
-
-  browser()
-  # Find best
-  # ranks <- order(order(startpointsval))
-  n0_inds_sorted <- order(startpointsval)
-  n1_inds <- n0_inds_sorted[1:n1]
-
-  # Run local optimizer over the n1 best
-  locoptouts <- list()
-  for (i in 1:n1) {
-    # pars_i <-
-    # Set start points
-    for (ivar in 1:length(par)) {
-      par[[ivar]]$start <- startpoints2[[n1_inds[[i]]]][[ivar]]
-    }
-
-    # Run local optimizer
-    locoptouts[[i]] <- mixopt_coorddesc(par=par, fn=fn, gr=gr)
-  }
-
-  n1_vals <- sapply(locoptouts, function(x) {x$val})
-  best_n1_ind <- which.min(n1_vals)[1]
-
-  browser()
-  # Return best
-  locoptouts[[best_n1_ind]]
-}
-
 #' Mixed variable optimization using coordinate descent
 #'
 #' @param par List of parameters
@@ -66,11 +9,122 @@ mixopt_multistart <- function(par, fn, gr=NULL, ..., method,
 #' @param verbose How much to print. 0 is none, 1 is standard,
 #' 2 is some, 3 is a lot, etc.
 #' @param track Should it track the parameters evaluated and value?
+#' @param global Global optimization algorithm to use.
+#' `FALSE` if you only want local optimization.
+#' @param local Local optimization algorithm to use.
+#' @param track Should it track the parameters evaluated and value?
 #' @importFrom stats optim
 #'
 #' @return List
+mixopt <- function(par, fn, gr=NULL,
+                   global="multistart",
+                   local="coorddesc",
+                   ...,
+                   method,
+                   verbose=10,
+                   track) {
+  return(mixopt_coorddesc(par=par, gr=gr, method=method, ...))
+}
+
+#' @rdname mixopt
+#' @export
+mixopt_multistart <- function(par, fn, gr=NULL,
+                              ..., method,
+                              n0=100, n1=3,
+                              maxiter=100, verbose=10,
+                              track=FALSE) {
+  # Start by evaluating n0 points, pick them randomly
+  stopifnot(is.numeric(n0), length(n0) == 1, n0 >= 1,
+            abs(n0 - as.integer(n0)) < 1e-8)
+  stopifnot(is.numeric(n1), length(n1) == 1, n1 >= 1,
+            abs(n1 - as.integer(n1)) < 1e-8)
+  stopifnot(n0 >= n1)
+  # browser()
+  starttime <- Sys.time()
+  counts_function <- 0
+
+  if (track) {
+    tracked_pars <- list()
+    tracked_vals <- numeric(0)
+    tracked_newbest <- logical(0)
+  }
+
+  startpoints <- list()
+  for (ivar in 1:length(par)) {
+    startpoints[[ivar]] <- par[[ivar]]$sample(n0)
+  }
+  startpoints2 <- list()
+  startpointsval <- rep(NaN, n0)
+  # Global points loop ----
+  for (i in 1:n0) {
+    # Generate start points
+    startpoints2[[i]] <- lapply(startpoints, function(x) {x[[i]]})
+    startpointsval[[i]] <- fn(startpoints2[[i]])
+    counts_function <- counts_function + 1
+    if (track) {
+      # browser()
+      tracked_pars[[length(tracked_pars) + 1]] <- startpoints2[[i]]
+      tracked_vals[[length(tracked_vals) + 1]] <- startpointsval[[i]]
+      tracked_newbest[[length(tracked_newbest) + 1]] <- (if (i==1) {T} else {startpointsval[[i]] < min(startpointsval[1:(i-1)])})
+    }
+  }
+
+  # browser()
+  # Find best
+  # ranks <- order(order(startpointsval))
+  n0_inds_sorted <- order(startpointsval)
+  n1_inds <- n0_inds_sorted[1:n1]
+
+  # Local search ----
+  # Run local optimizer over the n1 best
+  locoptouts <- list()
+  for (i in 1:n1) {
+    # pars_i <-
+    # Set start points
+    for (ivar in 1:length(par)) {
+      par[[ivar]]$start <- startpoints2[[n1_inds[[i]]]][[ivar]]
+    }
+
+    # Run local optimizer
+    locoptouts[[i]] <- mixopt_coorddesc(par=par, fn=fn, gr=gr, track=track)
+    counts_function <- counts_function + locoptouts[[i]]$counts[['function']]
+    if (track) {
+      # browser()
+      tracked_pars <- c(tracked_pars, locoptouts[[i]]$track$par)
+      tracked_vals <- c(tracked_vals, locoptouts[[i]]$track$val)
+      tracked_newbest <- c(tracked_newbest, locoptouts[[i]]$track$newbest)
+    }
+  }
+
+  n1_vals <- sapply(locoptouts, function(x) {x$val})
+  best_n1_ind <- which.min(n1_vals)[1]
+
+  # browser()
+  # Pick best
+  outlist <- locoptouts[[best_n1_ind]][c("par", "val")]
+  endtime <- Sys.time()
+
+  if (track) {
+    outlist$track <- list(
+      par=tracked_pars,
+      val=tracked_vals,
+      newbest=tracked_newbest
+    )
+  }
+
+  outlist$counts <- c("function"=counts_function, "gradient"=NA)
+  outlist$runtime <- endtime - starttime
+
+  # Add class
+  class(outlist) <- c("mixopt_output_list", class(outlist))
+
+  # Return list
+  outlist
+}
+
 #' @export
 #'
+#' @rdname mixopt
 #' @examples
 #' mixopt_coorddesc(par=list(mopar_cts(2,8)), fn=function(x) {(4.5-x[[1]])^2})
 #' mixopt_coorddesc(par=list(mopar_cts(2,8), mopar_unordered(letters[1:6])),
@@ -230,6 +284,7 @@ mixopt_coorddesc <- function(par, fn, gr=NULL, ..., method,
   outlist$runtime <- endtime - starttime
   # Add class
   class(outlist) <- c("mixopt_output_list", class(outlist))
+  # Return list
   outlist
 }
 

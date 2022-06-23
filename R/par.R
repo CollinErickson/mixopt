@@ -118,7 +118,7 @@ mopar_ordered <- function(values, start=NULL) {
     if (length(values) == 1) {
       rep(values, n)
     } else {
-      sample(values, n)
+      sample(values, n, replace = T)
     }
   }
   class(out) <- c("mixopt_par", "mixopt_par_ordered", class(out))
@@ -152,7 +152,7 @@ mopar_unordered <- function(values, start=NULL) {
     if (length(values) == 1) {
       rep(values, n)
     } else {
-      sample(values, n)
+      sample(values, n, replace = TRUE)
     }
   }
   class(out) <- c("mixopt_par", "mixopt_par_unordered", class(out))

@@ -24,8 +24,8 @@ mixopt_multistart(
   gr = NULL,
   ...,
   method,
-  n0 = 100,
-  n1 = 3,
+  n0 = 20,
+  n1 = 2,
   maxiter = 100,
   verbose = 10,
   track = FALSE
@@ -62,6 +62,11 @@ mixopt_coorddesc(
 2 is some, 3 is a lot, etc.}
 
 \item{track}{Should it track the parameters evaluated and value?}
+
+\item{n0}{For multistart, number of random initial points to evaluate.}
+
+\item{n1}{For multistart, number of best starts to optimize with
+gradient descent.}
 
 \item{maxiter}{Maximum number of outer iterations}
 }

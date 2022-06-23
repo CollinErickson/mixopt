@@ -27,10 +27,13 @@ mixopt <- function(par, fn, gr=NULL,
 }
 
 #' @rdname mixopt
+#' @param n0 For multistart, number of random initial points to evaluate.
+#' @param n1 For multistart, number of best starts to optimize with
+#' gradient descent.
 #' @export
 mixopt_multistart <- function(par, fn, gr=NULL,
                               ..., method,
-                              n0=100, n1=3,
+                              n0=20, n1=2,
                               maxiter=100, verbose=10,
                               track=FALSE) {
   # Start by evaluating n0 points, pick them randomly
@@ -78,6 +81,7 @@ mixopt_multistart <- function(par, fn, gr=NULL,
   # Local search ----
   # Run local optimizer over the n1 best
   locoptouts <- list()
+  # browser()
   for (i in 1:n1) {
     # pars_i <-
     # Set start points
@@ -86,7 +90,7 @@ mixopt_multistart <- function(par, fn, gr=NULL,
     }
 
     # Run local optimizer
-    locoptouts[[i]] <- mixopt_coorddesc(par=par, fn=fn, gr=gr, track=track)
+    locoptouts[[i]] <- mixopt_coorddesc(par=par, fn=fn, gr=gr, track=track, best_val_sofar=if (track) {min(tracked_vals)} else {Inf})
     counts_function <- counts_function + locoptouts[[i]]$counts[['function']]
     if (track) {
       # browser()
@@ -105,6 +109,10 @@ mixopt_multistart <- function(par, fn, gr=NULL,
   endtime <- Sys.time()
 
   if (track) {
+    if (any(diff(c(length(tracked_pars), length(tracked_vals),
+                   length(tracked_newbest))) != 0)) {
+      warning("Tracking has bad length #982367")
+    }
     outlist$track <- list(
       par=tracked_pars,
       val=tracked_vals,
@@ -144,9 +152,39 @@ mixopt_coorddesc <- function(par, fn, gr=NULL, ..., method,
     tracked_newbest <- logical(0)
   }
 
+  # Evaluate initial points
   par_par <- lapply(par, function(p) {p$start})
-  par_val <- Inf
   stopifnot(length(par_par) == npar)
+  # browser()
+  # par_val <- Inf
+
+  # Evaluate initial parameter if first to evaluated
+  # Only problem is that optim will duplicate it
+  # browser()
+  # if (iter == 1 && is.infinite(par_val)) {
+  # print("INITIALIZING away from Inf")
+  # par_val <- fnipar(par_par[[ipar]])
+  par_val <- fn(par_par)
+  # }
+
+  if (track) {
+    # tracked_pars <- list()
+    # tracked_vals <- numeric(0)
+    # tracked_newbest <- logical(0)
+    tracked_pars <- list(par_par)
+    tracked_vals <- par_val
+    # browser()
+    dots <- list(...)
+    if ("best_val_sofar" %in% names(dots)) {
+      # browser()
+      best_val_sofar_input <- dots$best_val_sofar
+      tracked_newbest <- (par_val < best_val_sofar_input)
+    } else {
+      best_val_sofar_input <- Inf
+      tracked_newbest <- TRUE
+    }
+  }
+
   iter <- 0
   counts_function <- 0
   starttime <- Sys.time()
@@ -155,12 +193,12 @@ mixopt_coorddesc <- function(par, fn, gr=NULL, ..., method,
   while(iter <= maxiter) {
     iter <- iter + 1
     par_val_before <- par_val
-    cat("Starting iter", iter, ", val is", par_val, "", "\n")
+    cat("Starting coordinate descent iteration", iter, ", val is", par_val, "", "\n")
     print(par_par)
     # browser()
     # Loop over pars ----
     for (ipar in 1:npar) {
-      best_val_sofar <- par_val
+      best_val_sofar <- min(par_val, best_val_sofar_input)
       fnipar <- function(pari) {
         # browser()
         x <- par_par
@@ -176,17 +214,19 @@ mixopt_coorddesc <- function(par, fn, gr=NULL, ..., method,
         fnx
       }
       if ("mixopt_par_cts" %in% class(par[[ipar]])) {
-        # cts ----
+        ## cts ----
         # Optimize over 1-D
         optout <- optim(par=par_par[[ipar]], fn=fnipar,
-                        method="Brent",
+                        method="L-BFGS-B",
                         lower=par[[ipar]]$lower,
-                        upper=par[[ipar]]$upper)
+                        upper=par[[ipar]]$upper,
+                        control=list(maxit=30))
 
         par_par[[ipar]] <- optout$par
         par_val <- optout$val
       } else if ("mixopt_par_ordered" %in% class(par[[ipar]])) {
         ## ordered ----
+        # Optimize over param
         # browser()
         if (length(par[[ipar]]$values) > .5) {
           # Get index of current value
@@ -238,7 +278,7 @@ mixopt_coorddesc <- function(par, fn, gr=NULL, ..., method,
           }
         }
       } else if ("mixopt_par_unordered" %in% class(par[[ipar]])) {
-        # unordered ----
+        ## unordered ----
         # browser()
         # Randomly try other param values
         param_values <- setdiff(par[[ipar]]$values, par_par[[ipar]])
@@ -274,6 +314,10 @@ mixopt_coorddesc <- function(par, fn, gr=NULL, ..., method,
     # outlist$track_par <- tracked_pars
     # outlist$track_val <- tracked_vals
     # outlist$track_newbest <- tracked_newbest
+    if (any(diff(c(length(tracked_pars), length(tracked_vals),
+                   length(tracked_newbest))) != 0)) {
+      warning("Tracking has bad length #19351378")
+    }
     outlist$track <- list(
       par=tracked_pars,
       val=tracked_vals,

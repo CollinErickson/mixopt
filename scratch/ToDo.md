@@ -14,12 +14,14 @@ To do
 
 * constraints?
 
-* increase tolerance early iteration
-
 * tests: par, mixopt
 
-* coordesc: eval first value
-
-* multistart: fix tracking
-
 * coorddesc with cts: repeating same output many times?
+
+* make sure track all have same length
+
+* coorddesc: seems to spend a lot of time not improving at end
+
+* set max run time
+
+* set maxiter

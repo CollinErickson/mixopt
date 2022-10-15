@@ -1,9 +1,37 @@
 library(ggplot2)
 library(dplyr)
 
+f1 <- function(x) {ifelse(x[[2]] == 'b', -1, 0) +(4.5-x[[1]])^2}
+curve(f1(list(x, 'b')), 2, 8)
+curve(f1(list(x, 'a')), 2, 8, add=T, col=2)
 mixopt_coorddesc(par=list(mopar_cts(2,8),
                           mopar_unordered(letters[1:6])),
-                 fn=function(x) {ifelse(x[[2]] == 'b', -1, 0) +(4.5-x[[1]])^2})
+                 fn=f1)
+
+# X1: continuous(2,8)
+# X2: discrete(a, b, c, d, e, f)
+f2 <- function(x) {
+  a <- if (x[[2]] %in% c('c','d','e')) {1} else {1.4}
+  b <- if (x[[2]] %in% c('a','d','f')) {1} else {.5}
+  c <- if (x[[2]] %in% c('a','b','c')) {4.5} else {5.5}
+  d <- if (x[[2]] %in% c('b','d','f')) {2} else {1.5}
+  e <- 1+if (x[[2]] %in% c('a','f')) {2} else if (x[[2]] %in% c('e','f')) {-1} else {0}
+  a*abs(b*x[[1]]-c)^d + e
+}
+f2_lwd <- 2.5
+curve(f2(list(x, 'a')), 2, 8, ylim=c(0,12), ylab="f2", lwd=f2_lwd)
+curve(f2(list(x, 'b')), 2, 8, add=T, col=2, lwd=f2_lwd)
+curve(f2(list(x, 'c')), 2, 8, add=T, col=3, lwd=f2_lwd)
+curve(f2(list(x, 'd')), 2, 8, add=T, col=4, lwd=f2_lwd)
+curve(f2(list(x, 'e')), 2, 8, add=T, col=5, lwd=f2_lwd)
+curve(f2(list(x, 'f')), 2, 8, add=T, col=6, lwd=f2_lwd)
+legend(x='topleft', legend=letters[1:6], fill=1:6)
+mop <- mixopt_coorddesc(par=list(mopar_cts(2,8),
+                          mopar_unordered(letters[1:6])),
+                 fn=f2)
+# Can get stuck in local min
+points(mop$par[[1]], mop$val, col=which(letters==mop$par[[2]]), pch=19, cex=3)
+
 
 mixopt_coorddesc(par=list(mopar_cts(2,8),
                           mopar_unordered(letters[1:6]),

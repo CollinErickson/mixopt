@@ -215,8 +215,13 @@ mixopt_coorddesc <- function(par, fn, gr=NULL, ..., method,
   while(iter <= maxiter) {
     iter <- iter + 1
     par_val_before <- par_val
-    cat("Starting coordinate descent iteration", iter, ", val is", par_val, "", "\n")
-    print(par_par)
+    if (verbose >= 2) {
+      cat("Starting coordinate descent iteration", iter, ", val is",
+          par_val, "", "\n")
+    }
+    if (verbose >= 5) {
+      print(par_par)
+    }
     # browser()
     # Loop over pars ----
     for (ipar in 1:npar) {
@@ -313,7 +318,9 @@ mixopt_coorddesc <- function(par, fn, gr=NULL, ..., method,
             iii_val <- fnipar(param_values[[iii]])
             if (iii_val < par_val) {
               # browser()
-              cat("New min from unordered param\n")
+              if (verbose>=4) {
+                cat("New min from unordered param\n")
+              }
               par_par[[ipar]] <- param_values[[iii]]
               par_val <- iii_val
             }
@@ -324,7 +331,9 @@ mixopt_coorddesc <- function(par, fn, gr=NULL, ..., method,
       }
     }
     if (par_val >= par_val_before) {
-      cat("No improvement, breaking while loop\n")
+      if (verbose >= 3) {
+        cat("No improvement, breaking while loop\n")
+      }
       break
     }
   }

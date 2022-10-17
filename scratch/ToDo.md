@@ -24,4 +24,4 @@ To do
 
 * set max run time
 
-* set maxiter
+* add stopping reason (maxeval, maxiter, maxtime, normal)

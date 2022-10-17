@@ -42,7 +42,7 @@ library(mixopt)
 ```
 
 
-### Example: coordinate descent
+### Example: coordinate descent for local minimization
 
 Suppose you have a function, called `f2`, that takes in two arguments.
 The first is a continuous numeric value between 2 and 8.

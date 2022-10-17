@@ -38,6 +38,7 @@ mixopt_coorddesc(
   ...,
   method,
   maxiter = 100,
+  maxeval = NULL,
   verbose = 10,
   track = FALSE
 )
@@ -65,10 +66,16 @@ mixopt_coorddesc(
 
 \item{n0}{For multistart, number of random initial points to evaluate.}
 
-\item{n1}{For multistart, number of best starts to optimize with
+\item{n1}{For multistart, number of best starts to optimize with.
+You should have `n0` less than `n1`, potentially by a large factor.
 gradient descent.}
 
-\item{maxiter}{Maximum number of outer iterations}
+\item{maxiter}{Maximum number of outer iterations.
+For coordinate descent, one iteration is a loop over each parameter.}
+
+\item{maxeval}{Maximum number of function evaluations.
+It may go over this number while in an inner optimization loop,
+but will exit after that.}
 }
 \value{
 List

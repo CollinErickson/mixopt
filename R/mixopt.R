@@ -5,7 +5,11 @@
 #' @param gr Gradient of fn
 #' @param ... Additional args
 #' @param method Optimization method
-#' @param maxiter Maximum number of outer iterations
+#' @param maxiter Maximum number of outer iterations.
+#' For coordinate descent, one iteration is a loop over each parameter.
+#' @param maxeval Maximum number of function evaluations.
+#' It may go over this number while in an inner optimization loop,
+#' but will exit after that.
 #' @param verbose How much to print. 0 is none, 1 is standard,
 #' 2 is some, 3 is a lot, etc.
 #' @param track Should it track the parameters evaluated and value?
@@ -28,7 +32,8 @@ mixopt <- function(par, fn, gr=NULL,
 
 #' @rdname mixopt
 #' @param n0 For multistart, number of random initial points to evaluate.
-#' @param n1 For multistart, number of best starts to optimize with
+#' @param n1 For multistart, number of best starts to optimize with.
+#' You should have `n0` less than `n1`, potentially by a large factor.
 #' gradient descent.
 #' @export
 #' @examples
@@ -107,7 +112,8 @@ mixopt_multistart <- function(par, fn, gr=NULL,
     }
 
     # Run local optimizer
-    locoptouts[[i]] <- mixopt_coorddesc(par=par, fn=fn, gr=gr, track=track, best_val_sofar=if (track) {min(tracked_vals)} else {Inf})
+    locoptouts[[i]] <- mixopt_coorddesc(par=par, fn=fn, gr=gr, track=track,
+                                        best_val_sofar=if (track) {min(tracked_vals)} else {Inf})
     counts_function <- counts_function + locoptouts[[i]]$counts[['function']]
     if (track) {
       # browser()
@@ -150,6 +156,7 @@ mixopt_multistart <- function(par, fn, gr=NULL,
 #' @export
 #'
 #' @rdname mixopt
+#'
 #' @examples
 #' # Simple 1D example
 #' mixopt_coorddesc(par=list(mopar_cts(2,8)), fn=function(x) {(4.5-x[[1]])^2})
@@ -158,14 +165,29 @@ mixopt_multistart <- function(par, fn, gr=NULL,
 #' mixopt_coorddesc(par=list(mopar_cts(2,8), mopar_unordered(letters[1:6])),
 #'                  fn=function(x) {ifelse(x[[2]] == 'b', -1, 0) +(4.5-x[[1]])^2})
 mixopt_coorddesc <- function(par, fn, gr=NULL, ..., method,
-                             maxiter=100, verbose=10,
+                             maxiter=100, maxeval=NULL,
+                             verbose=10,
                              track=FALSE) {
   # print(par)
+
+  # Verify that par are valid
   verify_par(par)
   if (verbose>=2) {
     cat("par are verified\n")
   }
   npar <- length(par)
+
+  # Check other inputs
+  stopifnot(is.numeric(maxiter), length(maxiter) == 1, maxiter >= 1,
+            abs(maxiter - as.integer(maxiter)) < 1e-8)
+  if (missing(maxeval) || is.null(maxeval)) {
+    maxeval <- Inf
+  } else {
+    stopifnot(is.numeric(maxeval), length(maxeval) == 1, maxeval >= 1,
+              abs(maxeval - as.integer(maxeval)) < 1e-8)
+  }
+
+  # Set up tracking
   if (track) {
     tracked_pars <- list()
     tracked_vals <- numeric(0)
@@ -212,7 +234,7 @@ mixopt_coorddesc <- function(par, fn, gr=NULL, ..., method,
   starttime <- Sys.time()
   # Iterate with while loop ----
   # An iteration goes over each variable separately
-  while(iter <= maxiter) {
+  while(iter <= maxiter && counts_function < maxeval) {
     iter <- iter + 1
     par_val_before <- par_val
     if (verbose >= 2) {
@@ -329,7 +351,14 @@ mixopt_coorddesc <- function(par, fn, gr=NULL, ..., method,
       } else {
         stop("bad par")
       }
-    }
+
+      # Break if exceeded max function evals
+      if (counts_function >= maxeval) {
+        break
+      }
+    } # end for (ipar in 1:npar)
+
+    # Break if no improvement
     if (par_val >= par_val_before) {
       if (verbose >= 3) {
         cat("No improvement, breaking while loop\n")

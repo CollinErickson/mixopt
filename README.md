@@ -29,7 +29,7 @@ Load the package with the following:
 library(mixopt)
 ```
 
-### Example: coordinate descent
+### Example: coordinate descent for local minimization
 
 Suppose you have a function, called `f2`, that takes in two arguments.
 The first is a continuous numeric value between 2 and 8. The second is a
@@ -83,7 +83,7 @@ out
 #>       25       NA 
 #> 
 #> $runtime
-#> Time difference of 0.0007369518 secs
+#> Time difference of 0.002318144 secs
 ```
 
 The output from the optimizer tells the value, the parameter values, the

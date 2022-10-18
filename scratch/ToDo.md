@@ -25,3 +25,5 @@ To do
 * set max run time
 
 * add stopping reason (maxeval, maxiter, maxtime, normal)
+
+* optim over ordered/int should take larger steps if small ones are decreasing

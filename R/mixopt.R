@@ -254,6 +254,11 @@ mixopt_coorddesc <- function(par, fn, gr=NULL, ..., method,
         x[[ipar]] <- pari
         fnx <- fn(x)
 
+        if (verbose >= 10) {
+          cat("  ipar=", ipar, " set at ", pari, " evaluates to ",
+              signif(fnx, 8), "\n")
+        }
+
         counts_function <<- counts_function + 1
         if (track) {
           tracked_pars[[length(tracked_pars) + 1]] <<- x

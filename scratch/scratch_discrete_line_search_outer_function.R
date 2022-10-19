@@ -51,10 +51,31 @@ full_line_search <- function(f, xarray, startind) {
 
   # If neither lower, return start
 
-  # If left is lower, go left
-  index_line_search(f=f, xarray=xarray[1:(startind)])
+  if (direction == "L") {
+    # If left is lower, go left
+    browser()
+    out <- index_line_search(f=f, xarray=rev(xarray[1:(startind)]))
+    out_ind_corrected <- startind - out$ind
+    return(list(ind=out_ind_corrected,
+                x=xarray[out_ind_corrected],
+                val=out$val
+                ))
+  } else if (direction == "R") {
+    # If right is lower, go right
+    out <- index_line_search(f=f, xarray=xarray[(startind+1):maxind])
+    out_ind_corrected <- startind + out$ind
+    return(list(ind=out_ind_corrected,
+                x=xarray[out_ind_corrected],
+                val=out$val
+    ))
+  } else {
+    stop("Error 1898715")
+  }
+  stop("Error 9148100")
 
-  # If right is lower, go right
 
+}
 
+if (F) {
+  full_line_search(function(x) {(x-50)^2}, 3:12, 5)
 }

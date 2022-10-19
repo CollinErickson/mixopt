@@ -1,9 +1,18 @@
-index_line_search <- function(f, maxind, xarray) {
+index_line_search <- function(f, xarray,
+                              plot="none") {
   # curve(f, 0, 300)
   # maxind <- 290
+  maxind <- length(xarray)
   stopifnot(maxind > 3.5)
+  # stopifnot(maxind)
+  stopifnot(plot %in% c("none", "ind", "x"))
   f2 <- function(ind) {f(xarray[ind])}
-  curve(f2, 1, maxind)
+  if (plot == "ind") {
+    curve(f2(round(x)), 1, maxind)
+  } else if (plot == "x") {
+    curve(f, xarray[1], xarray[maxind])
+  }
+  # pointsfunc <- function
   prevprevind <- 1
   prevprevy <- f2(prevprevind)
   step <- 1
@@ -23,10 +32,16 @@ index_line_search <- function(f, maxind, xarray) {
       nextind <- maxind
     }
     nexty <- f2(nextind)
-    points(nextind, nexty)
+    if (plot == "ind") {
+      points(nextind, nexty)
+    } else {
+      points(xarray[nextind], nexty)
+    }
   }
   # browser()
   print(c(prevprevind, prevprevy, prevind, prevy, nextind, nexty, step))
+
+  # TODO: if nextind == maxind,
 
   # Switch to the 4-3 point method
   print("in 4/3 method")
@@ -53,13 +68,23 @@ index_line_search <- function(f, maxind, xarray) {
       y2 <- ymid
       ind3 <- getindbetween(ind2, ind4)
       y3 <- f2(ind3)
-      points(ind3, y3, col=2)
+      # points(ind3, y3, col=2)
+      if (plot == "ind") {
+        points(ind3, y3, col=2)
+      } else {
+        points(xarray[ind3], y3, col=2)
+      }
     } else {
       ind3 <- indmid
       y3 <- ymid
       ind2 <- getindbetween(ind1, ind3)
       y2 <- f2(ind2)
-      points(ind2, y2, col=2)
+      # points(ind2, y2, col=2)
+      if (plot == "ind") {
+        points(ind2, y2)
+      } else {
+        points(xarray[ind2], y2)
+      }
     }
     cat(ind1, ind2, ind3, ind4, '\tys', y1, y2, y3, y4, '\n')
     # Convert 4 to 3
@@ -86,5 +111,10 @@ index_line_search <- function(f, maxind, xarray) {
 }
 
 if (F) {
-  index_line_search(function(x) {(x-100)^2}, 290, 1:290)
+  index_line_search(function(x) {(x-100)^2}, 1:290)
+  index_line_search(function(x) {(-x-100)^2}, -(1:290)^.92, plot="ind")
+  index_line_search(function(x) {(-x-100)^2}, -(1:290)^.92, plot="x")
+  xx <- sort(runif(1e2, -250, -30))
+  index_line_search(function(x) {(-x-100)^2}, xx, plot="ind")
+  index_line_search(function(x) {(-x-100)^2}, xx, plot="x")
 }

@@ -1,12 +1,62 @@
+#' Line search over indexed array in one direction
+#'
+#' @param f
+#' @param xarray
+#' @param y1
+#' @param plot
+#'
+#' @return
+# @export
+#'
+#' @examples
+#' index_line_search(function(x) {(x-100)^2}, 1:290)
+#' index_line_search(function(x) {(-x-100)^2}, -(1:290)^.92, plot="ind")
+#' index_line_search(function(x) {(-x-100)^2}, -(1:290)^.92, plot="x")
+#' xx <- sort(runif(1e2, -250, -30))
+#' index_line_search(function(x) {(-x-100)^2}, xx, plot="ind")
+#' index_line_search(function(x) {(-x-100)^2}, xx, plot="x")
 index_line_search <- function(f, xarray,
-                              plot="none") {
+                              y1=NULL,
+                              plot="none",
+                              verbose=0) {
   # curve(f, 0, 300)
   # maxind <- 290
   maxind <- length(xarray)
-  stopifnot(maxind > 3.5)
   # stopifnot(maxind)
   stopifnot(plot %in% c("none", "ind", "x"))
   f2 <- function(ind) {f(xarray[ind])}
+
+  if (is.null(y1)) {
+    y1 <- f2(xarray[1])
+  }
+
+  # If maxind is small, try all values
+  if (maxind == 1) {
+    return(list(
+      ind=1,
+      x=xarray[1],
+      val=y1
+    ))
+  }
+  y2 <- f2(xarray[2])
+  if (maxind == 2) {
+    if (y1 <= y2) {
+      return(list(
+        ind=1,
+        x=xarray[1],
+        val=y1
+      ))
+    } else {
+      return(list(
+        ind=2,
+        x=xarray[2],
+        val=y2
+      ))
+    }
+  }
+
+  stopifnot(maxind > 3.5)
+
   if (plot == "ind") {
     curve(f2(round(x)), 1, maxind)
   } else if (plot == "x") {
@@ -21,7 +71,9 @@ index_line_search <- function(f, xarray,
   nextind <- prevind + step
   nexty <- f2(nextind)
   while (nexty < prevy && nextind+.5 < maxind) {
-    print(c(prevprevind, prevprevy, prevind, prevy, nextind, nexty, step))
+    if (verbose >= 7) {
+      print(c(prevprevind, prevprevy, prevind, prevy, nextind, nexty, step))
+    }
     prevprevind <- prevind
     prevprevy <- prevy
     prevind <- nextind
@@ -39,12 +91,16 @@ index_line_search <- function(f, xarray,
     }
   }
   # browser()
-  print(c(prevprevind, prevprevy, prevind, prevy, nextind, nexty, step))
+  if (verbose >= 7) {
+    print(c(prevprevind, prevprevy, prevind, prevy, nextind, nexty, step))
+  }
 
   # TODO: if nextind == maxind,
 
   # Switch to the 4-3 point method
-  print("in 4/3 method")
+  if (verbose >= 7) {
+    print("in 4/3 method")
+  }
   getindbetween <- function(i1, i2) {
     if (i1+1.5 >= i2) {
       stop("No ind between")
@@ -86,7 +142,9 @@ index_line_search <- function(f, xarray,
         points(xarray[ind2], y2)
       }
     }
-    cat(ind1, ind2, ind3, ind4, '\tys', y1, y2, y3, y4, '\n')
+    if (verbose >= 7) {
+      cat(ind1, ind2, ind3, ind4, '\tys', y1, y2, y3, y4, '\n')
+    }
     # Convert 4 to 3
     if (y2 > y3) {
       ind1 <- ind2
@@ -99,7 +157,9 @@ index_line_search <- function(f, xarray,
       indmid <- ind2
       ymid <- y2
     }
-    cat("\t\t\t\t\t", ind1, indmid, ind4, '\tys', y1, ymid, y4, '\n')
+    if (verbose >= 7) {
+      cat("\t\t\t\t\t", ind1, indmid, ind4, '\tys', y1, ymid, y4, '\n')
+    }
 
   }
 

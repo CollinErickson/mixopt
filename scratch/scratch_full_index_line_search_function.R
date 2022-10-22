@@ -1,13 +1,19 @@
-full_line_search <- function(f, xarray, startind) {
+full_index_line_search <- function(f, xarray, startind, plot="none") {
   # startind <- 10
   # xarray <- sort(runif(1e2, 0, 100))
+  stopifnot(plot %in% c("none", "ind", "x"))
   maxind <- length(xarray)
   # f <- function(x) {cos(x/15)}
-  plot(xarray, f(xarray))
   f2 <- function(ind) {f(xarray[ind])}
 
+  if (plot == "ind") {
+    plot(xarray, f2(1:maxind))
+  } else if (plot == "x") {
+    plot(xarray, f(xarray))
+  }
+
   # If <= 10 inds, just eval all
-  if (maxind <= 10) {
+  if (maxind <= 3) {
     y <- rep(NA, maxind)
     for (i in 1:maxind) {
       y[i] <- f(xarray[i])
@@ -53,7 +59,7 @@ full_line_search <- function(f, xarray, startind) {
 
   if (direction == "L") {
     # If left is lower, go left
-    browser()
+    # browser()
     out <- index_line_search(f=f, xarray=rev(xarray[1:(startind)]))
     out_ind_corrected <- startind - out$ind
     return(list(ind=out_ind_corrected,
@@ -78,4 +84,14 @@ full_line_search <- function(f, xarray, startind) {
 
 if (F) {
   full_line_search(function(x) {(x-50)^2}, 3:12, 5)
+  full_line_search(function(x) {(x-50)^2}, 3, 1)
+  full_line_search(function(x) {(x-50)^2}, 3:4, 1)
+  full_line_search(function(x) {(x-50)^2}, 3:5, 1)
+  full_line_search(function(x) {(x+50)^2}, 3, 1)
+  full_line_search(function(x) {(x+50)^2}, 3:4, 1)
+  full_line_search(function(x) {(x+50)^2}, 3:5, 1)
+  full_line_search(function(x) {(x-50)^2}, 12:3, 8)
+  full_line_search(function(x) {(x-50)^2}, 0:1000, 8)
+  full_line_search(function(x) {(x-50)^2}, 0:1000, 999)
+  full_line_search(function(x) {sin(x/30)}, 0:1000, 999)
 }

@@ -26,4 +26,10 @@ To do
 
 * add stopping reason (maxeval, maxiter, maxtime, normal)
 
-* optim over ordered/int should take larger steps if small ones are decreasing
+* discrete optim
+
+  - use discrete line search (move dir, call new funcs)
+  
+  - Take in y1, y2 if already evaluated
+  
+  - rename files

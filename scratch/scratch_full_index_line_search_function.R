@@ -60,7 +60,8 @@ full_index_line_search <- function(f, xarray, startind, plot="none") {
   if (direction == "L") {
     # If left is lower, go left
     # browser()
-    out <- index_line_search(f=f, xarray=rev(xarray[1:(startind)]))
+    out <- index_line_search(f=f, xarray=rev(xarray[1:(startind)]),
+                             plot=plot, verbose=verbose)
     out_ind_corrected <- startind - out$ind
     return(list(ind=out_ind_corrected,
                 x=xarray[out_ind_corrected],
@@ -68,7 +69,8 @@ full_index_line_search <- function(f, xarray, startind, plot="none") {
                 ))
   } else if (direction == "R") {
     # If right is lower, go right
-    out <- index_line_search(f=f, xarray=xarray[(startind+1):maxind])
+    out <- index_line_search(f=f, xarray=xarray[(startind+1):maxind],
+                             plot=plot, verbose=verbose)
     out_ind_corrected <- startind + out$ind
     return(list(ind=out_ind_corrected,
                 x=xarray[out_ind_corrected],

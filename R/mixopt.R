@@ -346,7 +346,7 @@ mixopt_coorddesc <- function(par, fn, gr=NULL, ..., method,
             if (iii_val < par_val) {
               # browser()
               if (verbose>=4) {
-                cat("New min from unordered param\n")
+                cat("New min from unordered param", param_values[[iii]], "\n")
               }
               par_par[[ipar]] <- param_values[[iii]]
               par_val <- iii_val

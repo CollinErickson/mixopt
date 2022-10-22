@@ -18,11 +18,11 @@ To do
 
 * coorddesc with cts: repeating same output many times?
 
-* make sure track all have same length
-
 * coorddesc: seems to spend a lot of time not improving at end
 
 * set max run time
+
+* codecov
 
 * add stopping reason (maxeval, maxiter, maxtime, normal)
 
@@ -31,5 +31,3 @@ To do
   - use discrete line search (move dir, call new funcs)
   
   - Take in y1, y2 if already evaluated
-  
-  - rename files

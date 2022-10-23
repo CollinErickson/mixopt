@@ -28,4 +28,4 @@ To do
 
   - add more prints for verbose
 
-* par: print list, wraparound for discrete
+* par: print wraparound for discrete

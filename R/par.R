@@ -17,7 +17,6 @@ verify_par <- function(par) {
   stopifnot(length(par) > .5)
   for (i in 1:length(par)) {
     if (!("mixopt_par" %in% class(par[[i]]))) {
-      # browser()
       stop("Error: mixopt_par not in class for par[[i]]")
     }
     stopifnot("mixopt_par" %in% class(par[[i]]))
@@ -115,7 +114,6 @@ mopar_ordered <- function(values, start=NULL) {
   stopifnot(length(values) >= 1)
   # stopifnot(anyDuplicated(values))
   if(anyDuplicated(values) > .5) {
-    # browser()
     print(values)
     stop("mopar_unordered has duplicated values")
   }
@@ -164,7 +162,6 @@ print_mixopt_par_ordered_or_unordered <- function(x, ...) {
   # s <- paste(s, tcon1)
   s <- paste0(s, "\t values = ")
   if (length(x$values) <= 50) {
-    # browser()
     # s <- paste0(s,
     #             # "\t",
     #             capture.output(print(x$values,
@@ -181,7 +178,6 @@ print_mixopt_par_ordered_or_unordered <- function(x, ...) {
       }
     }
   } else { # Large size, only do some at beginning and end
-    # browser()
     # s <- paste0(s, "\t")
     for (i in 1:10) {
       if (i > 1.5) {
@@ -229,7 +225,6 @@ print_mixopt_par_ordered_or_unordered <- function(x, ...) {
 mopar_unordered <- function(values, start=NULL) {
   stopifnot(length(values) >= 1)
   if(anyDuplicated(values) > .5) {
-    # browser()
     print(values)
     stop("mopar_unordered has duplicated values")
   }
@@ -250,10 +245,6 @@ mopar_unordered <- function(values, start=NULL) {
 }
 
 #' @export
-#' @examples
-#' p1 <- mopar_cts(-1,1)
-#' p2 <- mopar_unordered(letters)
-#' c(p1, p2)
 c.mixopt_par <- function(..., recursive=FALSE) {
   out <- list()
   dots <- list(...)
@@ -262,4 +253,26 @@ c.mixopt_par <- function(..., recursive=FALSE) {
   }
   class(out) <- c("mixopt_par_list", class(out))
   out
+}
+
+if (F) {
+  # Check that combine and print work
+  p1 <- mopar_cts(-1,1)
+  p2 <- mopar_unordered(letters)
+  p3 <- mopar_ordered(runif(100))
+  c(p1, p2, p3)
+}
+
+#' @export
+#' @importFrom utils capture.output
+print.mixopt_par_list <- function(x, ...) {
+  s <- paste0("List of ", length(x), " mixopt pars\n")
+  for (i in 1:length(x)) {
+    s <- paste0(s, "\t[[", i, "]]")
+    xico <- capture.output(print(x[[i]]))
+    xico2 <- paste0("\t", xico, collapse = "\n")
+    s <- paste0(s, xico2, "\n") #"\t[[", i, "]]")
+  }
+  cat(s)
+  invisible(x)
 }

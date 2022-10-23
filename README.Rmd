@@ -16,6 +16,7 @@ knitr::opts_chunk$set(
 # mixopt
 
 <!-- badges: start -->
+[![R-CMD-check](https://github.com/CollinErickson/mixopt/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/CollinErickson/mixopt/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 **An R package for mixed variable nonlinear optimization**

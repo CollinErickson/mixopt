@@ -4,6 +4,8 @@
 # mixopt
 
 <!-- badges: start -->
+
+[![R-CMD-check](https://github.com/CollinErickson/mixopt/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/CollinErickson/mixopt/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 **An R package for mixed variable nonlinear optimization**
@@ -83,7 +85,7 @@ out
 #>       25       NA 
 #> 
 #> $runtime
-#> Time difference of 0.002318144 secs
+#> Time difference of 0.158227 secs
 ```
 
 The output from the optimizer tells the value, the parameter values, the

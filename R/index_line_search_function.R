@@ -8,6 +8,7 @@
 #'
 #' @return List
 #' @export
+#' @importFrom graphics curve points
 #'
 #' @examples
 #' index_line_search(function(x) {(x-100)^2}, 1:290)
@@ -63,7 +64,9 @@ index_line_search <- function(f, xarray,
   stopifnot(maxind > 3.5)
 
   if (plot == "ind") {
-    curve(f2(round(x)), 1, maxind)
+    # browser()
+    curvfunc <- Vectorize(function(x) {f2(round(x))})
+    curve(curvfunc, 1, maxind)
   } else if (plot == "x") {
     curve(f, xarray[1], xarray[maxind])
   }

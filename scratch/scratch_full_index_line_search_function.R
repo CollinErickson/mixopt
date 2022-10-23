@@ -1,4 +1,5 @@
-full_index_line_search <- function(f, xarray, startind, plot="none") {
+full_index_line_search <- function(f, xarray, startind, plot="none",
+                                   verbose=0) {
   # startind <- 10
   # xarray <- sort(runif(1e2, 0, 100))
   stopifnot(plot %in% c("none", "ind", "x"))
@@ -6,6 +7,7 @@ full_index_line_search <- function(f, xarray, startind, plot="none") {
   # f <- function(x) {cos(x/15)}
   f2 <- function(ind) {f(xarray[ind])}
 
+  # browser()
   if (plot == "ind") {
     plot(xarray, f2(1:maxind))
   } else if (plot == "x") {
@@ -41,7 +43,7 @@ full_index_line_search <- function(f, xarray, startind, plot="none") {
       # No improvement in either direction
       return(list(ind=startind,
                   x=xarray[startind],
-                  val=y[startind]))
+                  val=ystart))
     } else if (yleft1 <= yright1) {
       direction <- "L"
     } else if (yright1 <= yleft1) {
@@ -62,7 +64,7 @@ full_index_line_search <- function(f, xarray, startind, plot="none") {
     # browser()
     out <- index_line_search(f=f, xarray=rev(xarray[1:(startind)]),
                              plot=plot, verbose=verbose)
-    out_ind_corrected <- startind - out$ind
+    out_ind_corrected <- startind - out$ind + 1
     return(list(ind=out_ind_corrected,
                 x=xarray[out_ind_corrected],
                 val=out$val

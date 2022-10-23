@@ -22,12 +22,16 @@ index_line_search <- function(f, xarray,
   # curve(f, 0, 300)
   # maxind <- 290
   maxind <- length(xarray)
+  # browser()
   # stopifnot(maxind)
   stopifnot(plot %in% c("none", "ind", "x"))
-  f2 <- function(ind) {f(xarray[ind])}
+  f2 <- function(ind) {
+    f(xarray[ind])
+  }
 
   if (is.null(y1)) {
-    y1 <- f2(xarray[1])
+    # y1 <- f2(xarray[1])
+    y1 <- f2(1)
   }
 
   # If maxind is small, try all values
@@ -38,7 +42,7 @@ index_line_search <- function(f, xarray,
       val=y1
     ))
   }
-  y2 <- f2(xarray[2])
+  y2 <- f2(2)
   if (maxind == 2) {
     if (y1 <= y2) {
       return(list(

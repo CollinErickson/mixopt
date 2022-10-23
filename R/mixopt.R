@@ -161,6 +161,10 @@ mixopt_multistart <- function(par, fn, gr=NULL,
 #' # Simple 1D example
 #' mixopt_coorddesc(par=list(mopar_cts(2,8)), fn=function(x) {(4.5-x[[1]])^2})
 #'
+#' # 1D discrete ordered
+#' mixopt_coorddesc(par=list(mopar_ordered(100:10000)),
+#'                  fn=function(x) {(x[[1]] - 500.3)^2})
+#'
 #' # 2D: one continuous, one factor
 #' mixopt_coorddesc(par=list(mopar_cts(2,8), mopar_unordered(letters[1:6])),
 #'                  fn=function(x) {ifelse(x[[2]] == 'b', -1, 0) +(4.5-x[[1]])^2})
@@ -255,6 +259,9 @@ mixopt_coorddesc <- function(par, fn, gr=NULL, ..., method,
         fnx <- fn(x)
 
         if (verbose >= 10) {
+          if (is.na(pari)) {
+            browser()
+          }
           cat("  ipar=", ipar, " set at ", pari, " evaluates to ",
               signif(fnx, 8), "\n")
         }
@@ -282,55 +289,72 @@ mixopt_coorddesc <- function(par, fn, gr=NULL, ..., method,
         ## ordered ----
         # Optimize over param
         # browser()
-        if (length(par[[ipar]]$values) > .5) {
+        if (length(par[[ipar]]$values) > 1.5) {
           # Get index of current value
           startind <- which(par_par[[ipar]] == par[[ipar]]$values)
           stopifnot(length(startind) == 1)
-          # Try moving in one direction
-          # dir <- sample(c(-1, 1), 1)
-          curind <- startind #+ 1
-          # Check left and right
-          if (curind > 1.5) {
-            fnleft <- fnipar(par[[ipar]]$values[curind - 1])
-          } else {
-            fnleft <- Inf
-          }
-          if (curind < length(par[[ipar]]$values) - .5) {
-            fnright <- fnipar(par[[ipar]]$values[curind + 1])
-          } else {
-            fnright <- Inf
-          }
-          # Go the better of left/right
-          if (fnleft <= fnright && fnleft < par_val) {
-            par_par[[ipar]] <- par[[ipar]]$values[curind - 1]
-            par_val <- fnleft
-            # Keep going left
-            curind <- curind - 1
-            while (curind > 1.5) {
-              keepleftval <- fnipar(par[[ipar]]$values[curind - 1])
-              if (keepleftval < par_val) {
-                par_par[[ipar]] <- par[[ipar]]$values[curind - 1]
-                par_val <- keepleftval
-                curind <- curind - 1
-              } else {
-                break
+
+          if (F) {
+            stop("Not using this way anymore")
+            # Old way would go 1 index at a time
+            # Try moving in one direction
+            # dir <- sample(c(-1, 1), 1)
+            curind <- startind #+ 1
+            # Check left and right
+            if (curind > 1.5) {
+              fnleft <- fnipar(par[[ipar]]$values[curind - 1])
+            } else {
+              fnleft <- Inf
+            }
+            if (curind < length(par[[ipar]]$values) - .5) {
+              fnright <- fnipar(par[[ipar]]$values[curind + 1])
+            } else {
+              fnright <- Inf
+            }
+            # Go the better of left/right
+            if (fnleft <= fnright && fnleft < par_val) {
+              par_par[[ipar]] <- par[[ipar]]$values[curind - 1]
+              par_val <- fnleft
+              # Keep going left
+              curind <- curind - 1
+              while (curind > 1.5) {
+                keepleftval <- fnipar(par[[ipar]]$values[curind - 1])
+                if (keepleftval < par_val) {
+                  par_par[[ipar]] <- par[[ipar]]$values[curind - 1]
+                  par_val <- keepleftval
+                  curind <- curind - 1
+                } else {
+                  break
+                }
+              }
+            } else if (fnright <= fnleft && fnright < par_val) {
+              # Keep going right
+              curind <- curind + 1
+              while (curind < length(par[[ipar]]$values) - .5) {
+                keeprightval <- fnipar(par[[ipar]]$values[curind + 1])
+                if (keeprightval < par_val) {
+                  par_par[[ipar]] <- par[[ipar]]$values[curind + 1]
+                  par_val <- keeprightval
+                  curind <- curind + 1
+                } else {
+                  break
+                }
               }
             }
-          } else if (fnright <= fnleft && fnright < par_val) {
-            # Keep going right
-            curind <- curind + 1
-            while (curind < length(par[[ipar]]$values) - .5) {
-              keeprightval <- fnipar(par[[ipar]]$values[curind + 1])
-              if (keeprightval < par_val) {
-                par_par[[ipar]] <- par[[ipar]]$values[curind + 1]
-                par_val <- keeprightval
-                curind <- curind + 1
-              } else {
-                break
-              }
-            }
+            # End old way
+          } else {
+            # New way calls function
+            # browser()
+            fils_out <- full_index_line_search(f=fnipar,
+                                   xarray=par[[ipar]]$values,
+                                   startind=startind)
+
+            par_par[[ipar]] <- fils_out$x
+            par_val <- fils_out$val
+
           }
-        }
+        } # End at least 2 values.
+        # Else only single value, don't do anything.
       } else if ("mixopt_par_unordered" %in% class(par[[ipar]])) {
         ## unordered ----
         # browser()
@@ -340,7 +364,7 @@ mixopt_coorddesc <- function(par, fn, gr=NULL, ..., method,
         if (length(param_values) >= 10) {
           param_values <- sample(param_values, 10)
         }
-        if (length(param_values) > .5) {
+        if (length(param_values) > 1.5) {
           for (iii in 1:length(param_values)) {
             iii_val <- fnipar(param_values[[iii]])
             if (iii_val < par_val) {

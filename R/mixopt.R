@@ -289,79 +289,26 @@ mixopt_coorddesc <- function(par, fn, gr=NULL, ..., method,
       } else if ("mixopt_par_ordered" %in% class(par[[ipar]])) {
         ## ordered ----
         # Optimize over param
-        # browser()
         if (length(par[[ipar]]$values) > 1.5) {
           # Get index of current value
           startind <- which(par_par[[ipar]] == par[[ipar]]$values)
           stopifnot(length(startind) == 1)
 
-          if (F) {
-            stop("Not using this way anymore")
-            # Old way would go 1 index at a time
-            # Try moving in one direction
-            # dir <- sample(c(-1, 1), 1)
-            curind <- startind #+ 1
-            # Check left and right
-            if (curind > 1.5) {
-              fnleft <- fnipar(par[[ipar]]$values[curind - 1])
-            } else {
-              fnleft <- Inf
-            }
-            if (curind < length(par[[ipar]]$values) - .5) {
-              fnright <- fnipar(par[[ipar]]$values[curind + 1])
-            } else {
-              fnright <- Inf
-            }
-            # Go the better of left/right
-            if (fnleft <= fnright && fnleft < par_val) {
-              par_par[[ipar]] <- par[[ipar]]$values[curind - 1]
-              par_val <- fnleft
-              # Keep going left
-              curind <- curind - 1
-              while (curind > 1.5) {
-                keepleftval <- fnipar(par[[ipar]]$values[curind - 1])
-                if (keepleftval < par_val) {
-                  par_par[[ipar]] <- par[[ipar]]$values[curind - 1]
-                  par_val <- keepleftval
-                  curind <- curind - 1
-                } else {
-                  break
-                }
-              }
-            } else if (fnright <= fnleft && fnright < par_val) {
-              # Keep going right
-              curind <- curind + 1
-              while (curind < length(par[[ipar]]$values) - .5) {
-                keeprightval <- fnipar(par[[ipar]]$values[curind + 1])
-                if (keeprightval < par_val) {
-                  par_par[[ipar]] <- par[[ipar]]$values[curind + 1]
-                  par_val <- keeprightval
-                  curind <- curind + 1
-                } else {
-                  break
-                }
-              }
-            }
-            # End old way
-          } else {
-            # New way calls function
-            # browser()
-            fils_out <- full_index_line_search(f=fnipar,
-                                   xarray=par[[ipar]]$values,
-                                   startind=startind,
-                                   verbose=verbose,
-                                   ystart=par_val)
+          fils_out <- full_index_line_search(f=fnipar,
+                                             xarray=par[[ipar]]$values,
+                                             startind=startind,
+                                             verbose=verbose,
+                                             ystart=par_val)
 
-            par_par[[ipar]] <- fils_out$x
-            par_val <- fils_out$val
+          par_par[[ipar]] <- fils_out$x
+          par_val <- fils_out$val
 
-          }
         } # End at least 2 values.
         # Else only single value, don't do anything.
       } else if ("mixopt_par_unordered" %in% class(par[[ipar]])) {
         ## unordered ----
         # browser()
-        # Randomly try other param values
+        # Randomly try other param values b/c no info from order
         param_values <- setdiff(par[[ipar]]$values, par_par[[ipar]])
         # Limit it to a small number
         if (length(param_values) >= 10) {
@@ -403,9 +350,6 @@ mixopt_coorddesc <- function(par, fn, gr=NULL, ..., method,
   outlist <- list(par=par_par,
                   val=par_val)
   if (track) {
-    # outlist$track_par <- tracked_pars
-    # outlist$track_val <- tracked_vals
-    # outlist$track_newbest <- tracked_newbest
     if (any(diff(c(length(tracked_pars), length(tracked_vals),
                    length(tracked_newbest))) != 0)) {
       warning("Tracking has bad length #19351378")

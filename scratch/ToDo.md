@@ -29,3 +29,5 @@ To do
   - add more prints for verbose
 
 * par: print wraparound for discrete
+
+* check for NA, etc

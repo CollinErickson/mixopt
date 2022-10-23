@@ -22,8 +22,6 @@ To do
 
 * set max run time
 
-* codecov
-
 * add stopping reason (maxeval, maxiter, maxtime, normal)
 
 * discrete optim

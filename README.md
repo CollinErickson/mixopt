@@ -5,6 +5,7 @@
 
 <!-- badges: start -->
 
+[![codecov](https://codecov.io/gh/CollinErickson/mixopt/branch/master/graph/badge.svg)](https://codecov.io/gh/CollinErickson/mixopt)
 [![R-CMD-check](https://github.com/CollinErickson/mixopt/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/CollinErickson/mixopt/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
@@ -85,7 +86,7 @@ out
 #>       25       NA 
 #> 
 #> $runtime
-#> Time difference of 0.158227 secs
+#> Time difference of 0.1501598 secs
 ```
 
 The output from the optimizer tells the value, the parameter values, the

@@ -20,12 +20,12 @@
 #'              aes(V1, V2, color=newbest))
 #' }
 plot_track <- function(out) {
-  # browser()
   stopifnot(!is.null(out$track))
   dflist <- list()
   dflist$val <- out$track$val
   dflist$iter <- 1:length(dflist$val)
   dflist$newbest <- out$track$newbest
+  # Separate plot for each index, plus 1 for val
   plots <- list()
   for (i in 1:length(out$track$par[[1]])) {
     dflist[[paste0("par", i)]] <- sapply(out$track$par, function(x) {x[[i]]})
@@ -38,9 +38,7 @@ plot_track <- function(out) {
                                                 ggplot2::aes_string("iter", "val", color="newbest")) +
     ggplot2::geom_point()
 
-  # str(dflist)
-  df <- as.data.frame(dflist)
-  # browser()
+  # df <- as.data.frame(dflist)
   # dftall <- tidyr::pivot_longer(cols=colnames(df))
   # ggplot2::ggplot(df)
   # gridExtra::grid.arrange(plots)

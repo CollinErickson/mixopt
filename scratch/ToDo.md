@@ -31,3 +31,6 @@ To do
 * par: print wraparound for discrete
 
 * check for NA, etc
+
+* To have LHS-like starts for multistart, implement q on par and use instead
+of sample.

@@ -24,7 +24,7 @@ index_line_search <- function(f, xarray,
   if (verbose >= 10) {
     cat("Entering index_line_search", "\n")
   }
-  browser()
+  # browser()
   # curve(f, 0, 300)
   # maxind <- 290
   maxind <- length(xarray)

@@ -21,6 +21,10 @@ index_line_search <- function(f, xarray,
                               y1=NULL,
                               plot="none",
                               verbose=0) {
+  if (verbose >= 10) {
+    cat("Entering index_line_search", "\n")
+  }
+  browser()
   # curve(f, 0, 300)
   # maxind <- 290
   maxind <- length(xarray)
@@ -79,7 +83,7 @@ index_line_search <- function(f, xarray,
   nextind <- prevind + step
   nexty <- f2(nextind)
   while (nexty < prevy && nextind+.5 < maxind) {
-    if (verbose >= 7) {
+    if (verbose >= 12) {
       print(c(prevprevind, prevprevy, prevind, prevy, nextind, nexty, step))
     }
     prevprevind <- prevind

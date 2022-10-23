@@ -4,7 +4,14 @@
 \alias{full_index_line_search}
 \title{Optimize over array using line search}
 \usage{
-full_index_line_search(f, xarray, startind, plot = "none", verbose = 0)
+full_index_line_search(
+  f,
+  xarray,
+  startind,
+  plot = "none",
+  ystart = NULL,
+  verbose = 0
+)
 }
 \arguments{
 \item{f}{Function}
@@ -14,6 +21,9 @@ full_index_line_search(f, xarray, startind, plot = "none", verbose = 0)
 \item{startind}{Starting index}
 
 \item{plot}{Should plots be made?}
+
+\item{ystart}{Value of f when evaluated on element of xarray at index
+startind, aka f(xarray[startind])}
 
 \item{verbose}{Level of info to print}
 }

@@ -234,7 +234,7 @@ mixopt_coorddesc <- function(par, fn, gr=NULL, ..., method,
   }
 
   iter <- 0
-  counts_function <- 0
+  counts_function <- 1 # Evaluated once above
   starttime <- Sys.time()
   # Iterate with while loop ----
   # An iteration goes over each variable separately
@@ -348,7 +348,9 @@ mixopt_coorddesc <- function(par, fn, gr=NULL, ..., method,
             # browser()
             fils_out <- full_index_line_search(f=fnipar,
                                    xarray=par[[ipar]]$values,
-                                   startind=startind)
+                                   startind=startind,
+                                   verbose=verbose,
+                                   ystart=par_val)
 
             par_par[[ipar]] <- fils_out$x
             par_val <- fils_out$val

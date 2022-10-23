@@ -14,7 +14,7 @@ To do
 
 * constraints?
 
-* tests: (check codecov)
+* tests: (check codecov to see what tests to add)
 
 * coorddesc with cts: repeating same output many times?
 
@@ -24,8 +24,6 @@ To do
 
 * add stopping reason (maxeval, maxiter, maxtime, normal)
 
-* discrete optim
+* index line search
 
-  - use discrete line search (move dir, call new funcs)
-  
-  - Take in y1, y2 if already evaluated
+  - add more prints for verbose

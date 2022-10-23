@@ -1,12 +1,13 @@
 #' Line search over indexed array in one direction
 #'
-#' @param f
-#' @param xarray
-#' @param y1
-#' @param plot
+#' @param f f
+#' @param xarray xarray
+#' @param y1 y1
+#' @param plot plot
+#' @param verbose Level to print
 #'
-#' @return
-# @export
+#' @return List
+#' @export
 #'
 #' @examples
 #' index_line_search(function(x) {(x-100)^2}, 1:290)
@@ -90,7 +91,7 @@ index_line_search <- function(f, xarray,
     nexty <- f2(nextind)
     if (plot == "ind") {
       points(nextind, nexty)
-    } else {
+    } else if (plot == "x") {
       points(xarray[nextind], nexty)
     }
   }
@@ -131,7 +132,7 @@ index_line_search <- function(f, xarray,
       # points(ind3, y3, col=2)
       if (plot == "ind") {
         points(ind3, y3, col=2)
-      } else {
+      } else if (plot == "x") {
         points(xarray[ind3], y3, col=2)
       }
     } else {
@@ -142,7 +143,7 @@ index_line_search <- function(f, xarray,
       # points(ind2, y2, col=2)
       if (plot == "ind") {
         points(ind2, y2)
-      } else {
+      } else if (plot == "x") {
         points(xarray[ind2], y2)
       }
     }

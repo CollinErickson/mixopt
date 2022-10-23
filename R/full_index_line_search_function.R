@@ -1,3 +1,26 @@
+#' Optimize over array using line search
+#'
+#' @param f Function
+#' @param xarray Array of values
+#' @param startind Starting index
+#' @param plot Should plots be made?
+#' @param verbose Level of info to print
+#'
+#' @return List
+#' @export
+#'
+#' @examples
+#' full_index_line_search(function(x) {(x-50)^2}, 3:12, 5)
+#' full_index_line_search(function(x) {(x-50)^2}, 3, 1)
+#' full_index_line_search(function(x) {(x-50)^2}, 3:4, 1)
+#' full_index_line_search(function(x) {(x-50)^2}, 3:5, 1)
+#' full_index_line_search(function(x) {(x+50)^2}, 3, 1)
+#' full_index_line_search(function(x) {(x+50)^2}, 3:4, 1)
+#' full_index_line_search(function(x) {(x+50)^2}, 3:5, 1)
+#' full_index_line_search(function(x) {(x-50)^2}, 12:3, 8)
+#' full_index_line_search(function(x) {(x-50)^2}, 0:1000, 8)
+#' full_index_line_search(function(x) {(x-50)^2}, 0:1000, 999)
+#' full_index_line_search(function(x) {sin(x/30)}, 0:1000, 999)
 full_index_line_search <- function(f, xarray, startind, plot="none",
                                    verbose=0) {
   # startind <- 10
@@ -87,15 +110,15 @@ full_index_line_search <- function(f, xarray, startind, plot="none",
 }
 
 if (F) {
-  full_line_search(function(x) {(x-50)^2}, 3:12, 5)
-  full_line_search(function(x) {(x-50)^2}, 3, 1)
-  full_line_search(function(x) {(x-50)^2}, 3:4, 1)
-  full_line_search(function(x) {(x-50)^2}, 3:5, 1)
-  full_line_search(function(x) {(x+50)^2}, 3, 1)
-  full_line_search(function(x) {(x+50)^2}, 3:4, 1)
-  full_line_search(function(x) {(x+50)^2}, 3:5, 1)
-  full_line_search(function(x) {(x-50)^2}, 12:3, 8)
-  full_line_search(function(x) {(x-50)^2}, 0:1000, 8)
-  full_line_search(function(x) {(x-50)^2}, 0:1000, 999)
-  full_line_search(function(x) {sin(x/30)}, 0:1000, 999)
+  full_index_line_search(function(x) {(x-50)^2}, 3:12, 5)
+  full_index_line_search(function(x) {(x-50)^2}, 3, 1)
+  full_index_line_search(function(x) {(x-50)^2}, 3:4, 1)
+  full_index_line_search(function(x) {(x-50)^2}, 3:5, 1)
+  full_index_line_search(function(x) {(x+50)^2}, 3, 1)
+  full_index_line_search(function(x) {(x+50)^2}, 3:4, 1)
+  full_index_line_search(function(x) {(x+50)^2}, 3:5, 1)
+  full_index_line_search(function(x) {(x-50)^2}, 12:3, 8)
+  full_index_line_search(function(x) {(x-50)^2}, 0:1000, 8)
+  full_index_line_search(function(x) {(x-50)^2}, 0:1000, 999)
+  full_index_line_search(function(x) {sin(x/30)}, 0:1000, 999)
 }

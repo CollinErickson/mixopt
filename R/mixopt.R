@@ -260,7 +260,8 @@ mixopt_coorddesc <- function(par, fn, gr=NULL, ..., method,
 
         if (verbose >= 10) {
           if (is.na(pari)) {
-            browser()
+            # browser()
+            stop("pari is NA in coorddesc")
           }
           cat("  ipar=", ipar, " set at ", pari, " evaluates to ",
               signif(fnx, 8), "\n")

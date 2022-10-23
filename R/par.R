@@ -16,8 +16,9 @@ verify_par <- function(par) {
   stopifnot(is.list(par))
   stopifnot(length(par) > .5)
   for (i in 1:length(par)) {
-    if (!(("mixopt_par" %in% class(par[[i]])))) {
-      browser()
+    if (!("mixopt_par" %in% class(par[[i]]))) {
+      # browser()
+      stop("Error: mixopt_par not in class for par[[i]]")
     }
     stopifnot("mixopt_par" %in% class(par[[i]]))
   }

@@ -45,3 +45,12 @@ test_that("mopar_unordered", {
   expect_equal(length(s1), 8)
   expect_true(all(s1 %in% p1$values))
 })
+
+test_that("c on mopar", {
+  p1 <- mopar_cts(0, 1)
+  p2 <- mopar_unordered(letters)
+  expect_error({
+    cpar <- c(p1, p2)
+  }, NA)
+  expect_equal(length(cpar), 2)
+})

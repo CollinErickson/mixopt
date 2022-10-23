@@ -14,7 +14,7 @@ To do
 
 * constraints?
 
-* tests: par, mixopt
+* tests: (check codecov)
 
 * coorddesc with cts: repeating same output many times?
 

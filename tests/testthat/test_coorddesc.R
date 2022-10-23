@@ -27,7 +27,7 @@ test_that("coorddesc ordered", {
 test_that("coorddesc unordered", {
   expect_error(
     {
-      cdout <- mixopt_coorddesc(par=list(mopar_unordered(2:8)),
+      cdout <- mixopt_coorddesc(par=list(mopar_unordered(2:8, start=8)),
                                 fn=function(x) {(4.6-x[[1]])^2})
     }, NA
   )

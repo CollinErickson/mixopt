@@ -27,3 +27,5 @@ To do
 * index line search
 
   - add more prints for verbose
+
+* par: print list, wraparound for discrete

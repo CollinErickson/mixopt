@@ -2,6 +2,9 @@
 
 S3method(c,mixopt_par)
 S3method(print,mixopt_output_list)
+S3method(print,mixopt_par_cts)
+S3method(print,mixopt_par_ordered)
+S3method(print,mixopt_par_unordered)
 export(full_index_line_search)
 export(index_line_search)
 export(mixopt_coorddesc)

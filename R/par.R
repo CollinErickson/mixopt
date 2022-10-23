@@ -87,6 +87,15 @@ mopar_cts <- function(lower, upper, start=NULL) {
   out
 }
 
+#' @export
+print.mixopt_par_cts <- function(x, ...) {
+  s <- paste0("mopar_cts(lower = ", x$lower, ", ",
+              "upper = ", x$upper, ", ",
+              "start = ", x$start, ")\n")
+  cat(s)
+  invisible(x)
+}
+
 #' Ordered variable parameter
 #'
 #' @param values Values the parameter can take, in order
@@ -108,7 +117,7 @@ mopar_ordered <- function(values, start=NULL) {
   if(anyDuplicated(values) > .5) {
     # browser()
     print(values)
-    print("mopar_unordered has duplicated values")
+    stop("mopar_unordered has duplicated values")
   }
   if (is.null(start)) {
     start <- values[[ceiling(length(values) / 2)]]
@@ -124,6 +133,86 @@ mopar_ordered <- function(values, start=NULL) {
   }
   class(out) <- c("mixopt_par", "mixopt_par_ordered", class(out))
   out
+}
+
+#' @export
+print.mixopt_par_ordered <- function(x, ...) {
+  print_mixopt_par_ordered_or_unordered(x, ...)
+}
+
+#' @export
+print.mixopt_par_unordered <- function(x, ...) {
+  print_mixopt_par_ordered_or_unordered(x, ...)
+}
+
+print_mixopt_par_ordered_or_unordered <- function(x, ...) {
+  if ("mixopt_par_ordered" %in% class(x)) {
+    s <- paste0(
+      "mopar_ordered with ", length(x$values)," values\n"
+    )
+  } else if ("mixopt_par_unordered" %in% class(x)) {
+    s <- paste0(
+      "mopar_unordered with ", length(x$values)," values\n"
+    )
+  } else {
+    stop("Bad class passed to print_mixopt_par_ordered_or_unordered")
+  }
+  # co <- capture.output(print(x[c("values", "start")]))
+  # # Indent each
+  # tcon <- paste0("\t", co) #, "\n")
+  # tcon1 <- paste0(tcon, collapse = "\n")
+  # s <- paste(s, tcon1)
+  s <- paste0(s, "\t values = ")
+  if (length(x$values) <= 50) {
+    # browser()
+    # s <- paste0(s,
+    #             # "\t",
+    #             capture.output(print(x$values,
+    #                                  width=getOption("width")-15)),
+    #             "\n")
+    for (i in 1:length(x$values)) {
+      if (i > 1.5) {
+        s <- paste0(s, " ")
+      }
+      if (is.numeric(x$values[i])) {
+        s <- paste0(s, signif(x$values[i], 6))
+      } else {
+        s <- paste0(s, x$values[i])
+      }
+    }
+  } else { # Large size, only do some at beginning and end
+    # browser()
+    # s <- paste0(s, "\t")
+    for (i in 1:10) {
+      if (i > 1.5) {
+        s <- paste0(s, " ")
+      }
+      if (is.numeric(x$values[i])) {
+        s <- paste0(s, signif(x$values[i], 6))
+      } else {
+        s <- paste0(s, x$values[i])
+      }
+    }
+    s <- paste0(s, " ... (", length(x$values) -20,
+                " more values) ...")
+    for (i in (length(x$values)-9):length(x$values)) {
+      # if (i > length(x$values)-9+.5) {
+      s <- paste0(s, " ")
+      # }
+      if (is.numeric(x$values[i])) {
+        s <- paste0(s, signif(x$values[i], 6))
+      } else {
+        s <- paste0(s, x$values[i])
+      }
+      # if (i < length(x$values)-.5) {
+      #   s <- paste0(s, "")
+      # }
+    }
+  }
+  s <- paste0(s, "\n\tstart = ", x$start, "\n")
+  # s <- paste0(s, )
+  cat(s)
+  invisible(x)
 }
 
 #' Unordered factor parameter
@@ -142,7 +231,7 @@ mopar_unordered <- function(values, start=NULL) {
   if(anyDuplicated(values) > .5) {
     # browser()
     print(values)
-    print("mopar_unordered has duplicated values")
+    stop("mopar_unordered has duplicated values")
   }
   if (is.null(start)) {
     start <- values[[sample(1:length(values), 1)]]
@@ -161,11 +250,16 @@ mopar_unordered <- function(values, start=NULL) {
 }
 
 #' @export
+#' @examples
+#' p1 <- mopar_cts(-1,1)
+#' p2 <- mopar_unordered(letters)
+#' c(p1, p2)
 c.mixopt_par <- function(..., recursive=FALSE) {
   out <- list()
   dots <- list(...)
   for (i in 1:length(dots)) {
     out[[i]] <- dots[[i]]
   }
+  class(out) <- c("mixopt_par_list", class(out))
   out
 }

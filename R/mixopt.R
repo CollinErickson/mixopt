@@ -376,4 +376,5 @@ print.mixopt_output_list <- function(x, ...) {
   x2 <- x[setdiff(names(x), c("track"))]
   class(x2) <- setdiff(class(x2), "mixopt_output_list")
   print(x2)
+  invisible(x2)
 }

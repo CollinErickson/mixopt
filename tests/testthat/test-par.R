@@ -1,5 +1,11 @@
 library(testthat)
 
+test_that("verify par", {
+  expect_error(verify_par(1))
+  expect_error(mopar_cts(1,5), NA)
+  expect_error(c(mopar_cts(1,5), mopar_ordered(1:5)), NA)
+})
+
 test_that("mopar_cts", {
   p1 <- mopar_cts(-3,3)
   expect_s3_class(p1, "mixopt_par")
@@ -17,6 +23,11 @@ test_that("mopar_cts", {
   expect_true(all(s1 >= -3))
   expect_true(all(s1 <= 3))
   expect_equal(length(s1), 100)
+  # Check print
+  expect_error(cop1 <- capture.output(print(p1)), NA)
+  expect_true("character" %in% class(cop1))
+  expect_equal(cop1,
+               "mopar_cts(lower = -3, upper = 3, start = 0)")
 })
 
 test_that("mopar_ordered", {
@@ -32,6 +43,13 @@ test_that("mopar_ordered", {
   s1 <- p1$sample(8)
   expect_equal(length(s1), 8)
   expect_true(all(s1 %in% p1$values))
+  # Error if any duplicates
+  expect_error(mopar_ordered(c(1,2,3,4,5,5)))
+  # Check print
+  expect_error(cop1 <- capture.output(print(p1)), NA)
+  expect_equal(length(cop1), 3)
+  expect_equal(cop1[1], "mopar_ordered with 10 values")
+  expect_equal(cop1[2], "\t values = 1 2 3 4 5 6 7 8 9 10")
 })
 
 test_that("mopar_unordered", {
@@ -44,6 +62,13 @@ test_that("mopar_unordered", {
   s1 <- p1$sample(8)
   expect_equal(length(s1), 8)
   expect_true(all(s1 %in% p1$values))
+  # Error if any duplicates
+  expect_error(mopar_ordered(c(1,2,3,4,5,5)))
+  # Check print
+  expect_error(cop1 <- capture.output(print(p1)), NA)
+  expect_equal(length(cop1), 3)
+  expect_equal(cop1[1], "mopar_unordered with 10 values")
+  expect_equal(cop1[2], "\t values = 1 2 3 4 5 6 7 8 9 10")
 })
 
 test_that("c on mopar", {
@@ -53,4 +78,6 @@ test_that("c on mopar", {
     cpar <- c(p1, p2)
   }, NA)
   expect_equal(length(cpar), 2)
+  # Check print
+  expect_error(print(cpar), NA)
 })

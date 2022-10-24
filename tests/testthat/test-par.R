@@ -50,6 +50,12 @@ test_that("mopar_ordered", {
   expect_equal(length(cop1), 3)
   expect_equal(cop1[1], "mopar_ordered with 10 values")
   expect_equal(cop1[2], "\t values = 1 2 3 4 5 6 7 8 9 10")
+  # Many values, check print
+  expect_error(p100 <- mopar_ordered(1:100), NA)
+  expect_error(cop100 <- capture.output(print(p100)), NA)
+  expect_equal(length(cop100), 3)
+  expect_equal(cop100[1], "mopar_ordered with 100 values")
+  expect_equal(cop100[2], "\t values = 1 2 3 4 5 6 7 8 9 10 ... (80 more values) ... 91 92 93 94 95 96 97 98 99 100")
 })
 
 test_that("mopar_unordered", {
@@ -69,6 +75,12 @@ test_that("mopar_unordered", {
   expect_equal(length(cop1), 3)
   expect_equal(cop1[1], "mopar_unordered with 10 values")
   expect_equal(cop1[2], "\t values = 1 2 3 4 5 6 7 8 9 10")
+  # Many values, check print
+  expect_error(p100 <- mopar_unordered(1:100), NA)
+  expect_error(cop100 <- capture.output(print(p100)), NA)
+  expect_equal(length(cop100), 3)
+  expect_equal(cop100[1], "mopar_unordered with 100 values")
+  expect_equal(cop100[2], "\t values = 1 2 3 4 5 6 7 8 9 10 ... (80 more values) ... 91 92 93 94 95 96 97 98 99 100")
 })
 
 test_that("c on mopar", {

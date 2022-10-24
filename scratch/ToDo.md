@@ -32,5 +32,5 @@ To do
 
 * check for NA, etc
 
-* To have LHS-like starts for multistart, implement q on par and use instead
+* To have LHS-like starts for multistart, use q on par and use instead
 of sample.

@@ -10,7 +10,7 @@ To do
 
 * Boolean, integer?
 
-* Evaluate groups at a time?
+* Block coorddesc (all cts at once)
 
 * constraints?
 
@@ -31,9 +31,6 @@ To do
 * par: print wraparound for discrete
 
 * check for NA, etc
-
-* To have LHS-like starts for multistart, use q on par and use instead
-of sample.
 
 * Allow for sequences/integers, so all values don't have to be given.
 E.g. 1:1e7 may be too big to store in memory.

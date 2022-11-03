@@ -32,7 +32,6 @@ mixopt_multistart <- function(par, fn, gr=NULL,
   stopifnot(is.numeric(n1), length(n1) == 1, n1 >= 1,
             abs(n1 - as.integer(n1)) < 1e-8)
   stopifnot(n0 >= n1)
-  # browser()
   starttime <- Sys.time()
   counts_function <- 0
 
@@ -43,8 +42,11 @@ mixopt_multistart <- function(par, fn, gr=NULL,
   }
 
   startpoints <- list()
+  startpointslhs <- list()
+  lhsq <- lhs::maximinLHS(n=n0, k=length(par))
   for (ivar in 1:length(par)) {
     startpoints[[ivar]] <- par[[ivar]]$sample(n0)
+    startpointslhs[[ivar]] <- par[[ivar]]$q(lhsq[, ivar])
   }
   startpoints2 <- list()
   startpointsval <- rep(NaN, n0)
@@ -55,14 +57,12 @@ mixopt_multistart <- function(par, fn, gr=NULL,
     startpointsval[[i]] <- fn(startpoints2[[i]])
     counts_function <- counts_function + 1
     if (track) {
-      # browser()
       tracked_pars[[length(tracked_pars) + 1]] <- startpoints2[[i]]
       tracked_vals[[length(tracked_vals) + 1]] <- startpointsval[[i]]
       tracked_newbest[[length(tracked_newbest) + 1]] <- (if (i==1) {T} else {startpointsval[[i]] < min(startpointsval[1:(i-1)])})
     }
   }
 
-  # browser()
   # Find best
   # ranks <- order(order(startpointsval))
   n0_inds_sorted <- order(startpointsval)
@@ -71,7 +71,6 @@ mixopt_multistart <- function(par, fn, gr=NULL,
   # Local search ----
   # Run local optimizer over the n1 best
   locoptouts <- list()
-  # browser()
   for (i in 1:n1) {
     # pars_i <-
     # Set start points
@@ -84,7 +83,6 @@ mixopt_multistart <- function(par, fn, gr=NULL,
                                         best_val_sofar=if (track) {min(tracked_vals)} else {Inf})
     counts_function <- counts_function + locoptouts[[i]]$counts[['function']]
     if (track) {
-      # browser()
       tracked_pars <- c(tracked_pars, locoptouts[[i]]$track$par)
       tracked_vals <- c(tracked_vals, locoptouts[[i]]$track$val)
       tracked_newbest <- c(tracked_newbest, locoptouts[[i]]$track$newbest)
@@ -94,7 +92,6 @@ mixopt_multistart <- function(par, fn, gr=NULL,
   n1_vals <- sapply(locoptouts, function(x) {x$val})
   best_n1_ind <- which.min(n1_vals)[1]
 
-  # browser()
   # Pick best
   outlist <- locoptouts[[best_n1_ind]][c("par", "val")]
   endtime <- Sys.time()

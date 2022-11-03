@@ -12,7 +12,8 @@
 #'
 #' # 2D: one continuous, one factor
 #' mixopt_coorddesc(par=list(mopar_cts(2,8), mopar_unordered(letters[1:6])),
-#'                  fn=function(x) {ifelse(x[[2]] == 'b', -1, 0) +(4.5-x[[1]])^2})
+#'                  fn=function(x) {ifelse(x[[2]] == 'b', -1, 0) +
+#'                                  (4.5-x[[1]])^2})
 mixopt_coorddesc <- function(par, fn, gr=NULL, ..., method,
                              maxiter=100, maxeval=NULL,
                              verbose=10,
@@ -116,7 +117,8 @@ mixopt_coorddesc <- function(par, fn, gr=NULL, ..., method,
         if (track) {
           tracked_pars[[length(tracked_pars) + 1]] <<- x
           tracked_vals[[length(tracked_vals) + 1]] <<- fnx
-          tracked_newbest[[length(tracked_newbest) + 1]] <<- (fnx < best_val_sofar)
+          tracked_newbest[[length(tracked_newbest) + 1]] <<-
+            (fnx < best_val_sofar)
         }
         fnx
       }

@@ -135,7 +135,7 @@ mopar_ordered <- function(values, start=NULL) {
   }
   out$q <- function(p) {
     stopifnot(p>=0, p<=1)
-    1 + floor(length(values) * p*.999999999)
+    values[1 + floor(length(values) * p*.999999999)]
   }
   class(out) <- c("mixopt_par", "mixopt_par_ordered", class(out))
   out
@@ -250,7 +250,7 @@ mopar_unordered <- function(values, start=NULL) {
   }
   out$q <- function(p) {
     stopifnot(p>=0, p<=1)
-    1 + floor(length(values) * p*.999999999)
+    values[1 + floor(length(values) * p*.999999999)]
   }
   class(out) <- c("mixopt_par", "mixopt_par_unordered", class(out))
   out

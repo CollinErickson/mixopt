@@ -24,11 +24,9 @@ index_line_search <- function(f, xarray,
   if (verbose >= 10) {
     cat("Entering index_line_search", "\n")
   }
-  # browser()
   # curve(f, 0, 300)
   # maxind <- 290
   maxind <- length(xarray)
-  # browser()
   # stopifnot(maxind)
   stopifnot(plot %in% c("none", "ind", "x"))
   f2 <- function(ind) {
@@ -68,7 +66,6 @@ index_line_search <- function(f, xarray,
   stopifnot(maxind > 3.5)
 
   if (plot == "ind") {
-    # browser()
     curvfunc <- Vectorize(function(x) {f2(round(x))})
     curve(curvfunc, 1, maxind)
   } else if (plot == "x") {
@@ -102,7 +99,6 @@ index_line_search <- function(f, xarray,
       points(xarray[nextind], nexty)
     }
   }
-  # browser()
   if (verbose >= 7) {
     print(c(prevprevind, prevprevy, prevind, prevy, nextind, nexty, step))
   }

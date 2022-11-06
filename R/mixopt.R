@@ -32,9 +32,6 @@ mixopt <- function(par, fn, gr=NULL,
 
 #' @export
 print.mixopt_output_list <- function(x, ...) {
-  # browser()
-  # print('printing new thing')
-  # x2 <- x[setdiff(names(x), c("track_par", "track_val"))]
   x2 <- x[setdiff(names(x), c("track"))]
   class(x2) <- setdiff(class(x2), "mixopt_output_list")
   print(x2)

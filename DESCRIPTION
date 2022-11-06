@@ -6,7 +6,7 @@ Author: Collin Erickson
 Maintainer: Collin Erickson <collinberickson@gmail.com>
 Description: Mixed variable optimization for non-linear functions.
     Can optimize function whose inputs are a combination of continuous,
-    ordered, and unordered.
+    ordered, and unordered variables.
 Suggests:
     ContourFunctions,
     dplyr,

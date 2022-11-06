@@ -43,7 +43,6 @@ full_index_line_search <- function(f, xarray, startind, plot="none",
   }
   stopifnot(length(ystart) == 1)
 
-  # browser()
   if (plot == "ind") {
     plot(xarray, f2(1:maxind))
   } else if (plot == "x") {
@@ -106,7 +105,6 @@ full_index_line_search <- function(f, xarray, startind, plot="none",
 
   if (direction == "L") {
     # If left is lower, go left
-    # browser()
     out <- index_line_search(f=f, xarray=rev(xarray[1:(startind)]),
                              plot=plot, verbose=verbose,
                              y1=yleft1)

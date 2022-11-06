@@ -47,12 +47,10 @@ mixopt_coorddesc <- function(par, fn, gr=NULL, ..., method,
   # Evaluate initial points
   par_par <- lapply(par, function(p) {p$start})
   stopifnot(length(par_par) == npar)
-  # browser()
   # par_val <- Inf
 
   # Evaluate initial parameter if first to evaluated
   # Only problem is that optim will duplicate it
-  # browser()
   # if (iter == 1 && is.infinite(par_val)) {
   # print("INITIALIZING away from Inf")
   # par_val <- fnipar(par_par[[ipar]])
@@ -65,10 +63,8 @@ mixopt_coorddesc <- function(par, fn, gr=NULL, ..., method,
     # tracked_newbest <- logical(0)
     tracked_pars <- list(par_par)
     tracked_vals <- par_val
-    # browser()
     dots <- list(...)
     if ("best_val_sofar" %in% names(dots)) {
-      # browser()
       best_val_sofar_input <- dots$best_val_sofar
       tracked_newbest <- (par_val < best_val_sofar_input)
     } else {
@@ -94,19 +90,16 @@ mixopt_coorddesc <- function(par, fn, gr=NULL, ..., method,
     if (verbose >= 5) {
       print(par_par)
     }
-    # browser()
     # Loop over pars ----
     for (ipar in 1:npar) {
       best_val_sofar <- min(par_val, best_val_sofar_input)
       fnipar <- function(pari) {
-        # browser()
         x <- par_par
         x[[ipar]] <- pari
         fnx <- fn(x)
 
         if (verbose >= 10) {
           if (is.na(pari)) {
-            # browser()
             stop("pari is NA in coorddesc")
           }
           cat("  ipar=", ipar, " set at ", pari, " evaluates to ",
@@ -154,7 +147,6 @@ mixopt_coorddesc <- function(par, fn, gr=NULL, ..., method,
         # Else only single value, don't do anything.
       } else if ("mixopt_par_unordered" %in% class(par[[ipar]])) {
         ## unordered ----
-        # browser()
         # Randomly try other param values b/c no info from order
         param_values <- setdiff(par[[ipar]]$values, par_par[[ipar]])
         # Limit it to a small number
@@ -165,7 +157,6 @@ mixopt_coorddesc <- function(par, fn, gr=NULL, ..., method,
           for (iii in 1:length(param_values)) {
             iii_val <- fnipar(param_values[[iii]])
             if (iii_val < par_val) {
-              # browser()
               if (verbose>=4) {
                 cat("New min from unordered param", param_values[[iii]], "\n")
               }

@@ -1,6 +1,6 @@
 Package: mixopt
 Type: Package
-Title: Mixed variable optimization
+Title: Mixed Variable Optimization
 Version: 0.1.0
 Author: Collin Erickson
 Maintainer: Collin Erickson <collinberickson@gmail.com>

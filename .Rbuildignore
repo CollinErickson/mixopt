@@ -5,3 +5,4 @@ scratch/
 ^README\.Rmd$
 ^\.github$
 ^cran-comments\.md$
+^revdep$

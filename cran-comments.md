@@ -1,8 +1,10 @@
 ## Test environments
 
-- local Windows 11, R 4.2.1
+- local Windows 11, R 4.2.2
 - R-hub: Fedora, Ubuntu, Windows
 - Ubuntu 20.04.5 via GitHub Actions
+- Win Builder
+- macOS builder
 
 ## R CMD check results
 

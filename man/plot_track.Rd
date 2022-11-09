@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot_track.R
 \name{plot_track}
 \alias{plot_track}
-\title{Plot the traked parameters from an optimization}
+\title{Plot the tracked parameters from an optimization}
 \usage{
 plot_track(out)
 }
@@ -13,7 +13,7 @@ plot_track(out)
 Plot
 }
 \description{
-Plot the traked parameters from an optimization
+Plot the tracked parameters from an optimization
 }
 \examples{
 f8 <- function(x) {-(x[[1]]+x[[2]]) + .1*(x[[1]] - x[[2]])^2}

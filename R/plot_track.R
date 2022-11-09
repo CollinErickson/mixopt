@@ -1,4 +1,4 @@
-#' Plot the traked parameters from an optimization
+#' Plot the tracked parameters from an optimization
 #'
 #' @param out Output from mixopt
 #'

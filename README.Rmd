@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
 # mixopt
 
 <!-- badges: start -->
-[![codecov](https://codecov.io/gh/CollinErickson/mixopt/branch/main/graph/badge.svg?token=ELZC700FO3)](https://codecov.io/gh/CollinErickson/mixopt)
+[![codecov](https://codecov.io/gh/CollinErickson/mixopt/branch/main/graph/badge.svg?token=ELZC700FO3)](https://app.codecov.io/gh/CollinErickson/mixopt)
 [![R-CMD-check](https://github.com/CollinErickson/mixopt/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/CollinErickson/mixopt/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 

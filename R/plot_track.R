@@ -11,14 +11,15 @@
 #' m8 <- mixopt_coorddesc(par=list(mopar_ordered(0:100), mopar_ordered(0:100)),
 #'                        fn=f8, track = TRUE)
 #' plot_track(m8)
-#' \dontrun{
+#'
+#' library(ggplot2)
+#' library(dplyr)
 #' ContourFunctions::cf_func(f8, xlim=c(0,100), ylim=c(0,100),
-#'                           # pts=matrix(unlist(m8$track$par), ncol=2, byrow=TRUE),
 #'                           gg = TRUE) +
-#'   geom_point(data=as.data.frame(matrix(unlist(m8$track$par), ncol=2, byrow=TRUE)) %>%
-#'                bind_cols(newbest=m8$track$newbest),
+#'   geom_point(data=as.data.frame(matrix(unlist(m8$track$par),
+#'                                 ncol=2, byrow=TRUE)) %>%
+#'                     bind_cols(newbest=m8$track$newbest),
 #'              aes(V1, V2, color=newbest))
-#' }
 plot_track <- function(out) {
   stopifnot(!is.null(out$track))
   dflist <- list()
@@ -51,4 +52,17 @@ if (F) {
                          fn=function(x) {ifelse(x[[2]] == 'b', -1, 0) +(4.5-x[[1]])^2 + x[[1]]*(log(x[[3]])-1)^2},
                          track = T)
   plot_track(pt)
+
+  f8 <- function(x) {-(x[[1]]+x[[2]]) + .1*(x[[1]] - x[[2]])^2}
+  ContourFunctions::cf_func(f8, xlim=c(0,100), ylim=c(0,100))
+  m8 <- mixopt_coorddesc(par=list(mopar_ordered(0:100), mopar_ordered(0:100)),
+                         fn=f8, track = TRUE)
+  plot_track(m8)
+  ContourFunctions::cf_func(f8, xlim=c(0,100), ylim=c(0,100),
+                            # pts=matrix(unlist(m8$track$par), ncol=2, byrow=TRUE),
+                            gg = TRUE) +
+    ggplot2::geom_point(data=as.data.frame(matrix(unlist(m8$track$par), ncol=2, byrow=TRUE)) %>%
+                          bind_cols(newbest=m8$track$newbest),
+                        ggplot2::aes(V1, V2, color=newbest))
+
 }

@@ -25,7 +25,7 @@
 mixopt_multistart <- function(par, fn, gr=NULL,
                               ..., method,
                               n0=20, n1=2,
-                              maxiter=100, verbose=10,
+                              maxiter=100, verbose=0,
                               track=FALSE) {
   # Start by evaluating n0 points, pick them randomly
   stopifnot(is.numeric(n0), length(n0) == 1, n0 >= 1,

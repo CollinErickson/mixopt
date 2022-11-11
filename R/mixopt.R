@@ -25,7 +25,7 @@ mixopt <- function(par, fn, gr=NULL,
                    local="coorddesc",
                    ...,
                    method,
-                   verbose=10,
+                   verbose=0,
                    track) {
   return(mixopt_multistart(par=par, gr=gr, method=method, ...))
 }

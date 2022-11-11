@@ -15,7 +15,7 @@ mixopt(
   local = "coorddesc",
   ...,
   method,
-  verbose = 10,
+  verbose = 0,
   track
 )
 
@@ -27,7 +27,7 @@ mixopt_coorddesc(
   method,
   maxiter = 100,
   maxeval = NULL,
-  verbose = 10,
+  verbose = 0,
   track = FALSE
 )
 
@@ -40,7 +40,7 @@ mixopt_multistart(
   n0 = 20,
   n1 = 2,
   maxiter = 100,
-  verbose = 10,
+  verbose = 0,
   track = FALSE
 )
 }

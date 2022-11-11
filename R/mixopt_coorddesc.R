@@ -16,7 +16,7 @@
 #'                                  (4.5-x[[1]])^2})
 mixopt_coorddesc <- function(par, fn, gr=NULL, ..., method,
                              maxiter=100, maxeval=NULL,
-                             verbose=10,
+                             verbose=0,
                              track=FALSE) {
   # print(par)
 

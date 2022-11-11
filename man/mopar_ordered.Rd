@@ -19,7 +19,6 @@ Ordered variable parameter
 }
 \examples{
 mopar_ordered(c(1,3,5))
-#mopar_ordered(c(1,1))
 mopar_ordered(c('a','c'))
 mopar_ordered(1:4)
 mopar_ordered(4:1)

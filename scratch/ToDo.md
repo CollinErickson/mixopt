@@ -34,3 +34,17 @@ To do
 
 * Allow for sequences/integers, so all values don't have to be given.
 E.g. 1:1e7 may be too big to store in memory.
+
+* Add references, requested by CRAN
+
+* maxeval for multistart, line search
+
+* maxtime for multistart, line search
+
+* verify_par should return TRUE instead of NULL
+
+* Fix 3.5 in indexlinesearchfunction
+
+* wrong: index_line_search(function(x) {(-x-100)^2}, (-51):53, plot="x")
+
+* make sure par is valid at end

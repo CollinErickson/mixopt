@@ -62,6 +62,15 @@ index_line_search <- function(f, xarray,
       ))
     }
   }
+  if (maxind == 3) {
+    y3 <- f2(3)
+    ind <- which.min(c(y1, y2, y3))[1]
+    return(list(
+      ind=ind,
+      x=xarray[ind],
+      val=min(c(y1, y2, y3))
+    ))
+  }
 
   stopifnot(maxind > 3.5)
 

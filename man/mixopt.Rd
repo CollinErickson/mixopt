@@ -27,6 +27,7 @@ mixopt_coorddesc(
   method,
   maxiter = 100,
   maxeval = NULL,
+  maxtime = NULL,
   verbose = 0,
   track = FALSE
 )
@@ -40,6 +41,7 @@ mixopt_multistart(
   n0 = 20,
   n1 = 2,
   maxiter = 100,
+  maxeval = NULL,
   verbose = 0,
   track = FALSE
 )
@@ -71,6 +73,9 @@ For coordinate descent, one iteration is a loop over each parameter.}
 \item{maxeval}{Maximum number of function evaluations.
 It may go over this number while in an inner optimization loop,
 but will exit after that.}
+
+\item{maxtime}{Maximum time to run in seconds. Not an exact limit, only
+checks occasionally.}
 
 \item{n0}{For multistart, number of random initial points to evaluate.}
 
@@ -113,4 +118,9 @@ ContourFunctions::cf_func(f6, xlim=c(0,100), ylim=c(-100,100),
   geom_point(data=as.data.frame(matrix(unlist(ms6$track$par), ncol=2, byrow=TRUE)) \%>\%
                bind_cols(newbest=ms6$track$newbest),
              aes(V1, V2, color=newbest), alpha=.5)
+}
+\references{
+https://en.wikipedia.org/wiki/Coordinate_descent
+
+https://www.uv.es/rmarti/paper/docs/multi2.pdf
 }

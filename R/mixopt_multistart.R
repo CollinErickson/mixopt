@@ -3,6 +3,9 @@
 #' @param n1 For multistart, number of best starts to optimize with.
 #' You should have `n0` less than `n1`, potentially by a large factor.
 #' gradient descent.
+#'
+#' @references https://www.uv.es/rmarti/paper/docs/multi2.pdf
+#'
 #' @export
 #' @examples
 #' # 2D
@@ -25,7 +28,8 @@
 mixopt_multistart <- function(par, fn, gr=NULL,
                               ..., method,
                               n0=20, n1=2,
-                              maxiter=100, verbose=0,
+                              maxiter=100, maxeval=NULL,
+                              verbose=0,
                               track=FALSE) {
   # Start by evaluating n0 points, pick them randomly
   stopifnot(is.numeric(n0), length(n0) == 1, n0 >= 1,
@@ -33,6 +37,15 @@ mixopt_multistart <- function(par, fn, gr=NULL,
   stopifnot(is.numeric(n1), length(n1) == 1, n1 >= 1,
             abs(n1 - as.integer(n1)) < 1e-8)
   stopifnot(n0 >= n1)
+
+  # Fix maxeval
+  if (missing(maxeval) || is.null(maxeval)) {
+    maxeval <- Inf
+  } else {
+    stopifnot(is.numeric(maxeval), length(maxeval) == 1, maxeval >= 1,
+              abs(maxeval - as.integer(maxeval)) < 1e-8)
+  }
+
   starttime <- Sys.time()
   counts_function <- 0
 
@@ -80,8 +93,10 @@ mixopt_multistart <- function(par, fn, gr=NULL,
     }
 
     # Run local optimizer
-    locoptouts[[i]] <- mixopt_coorddesc(par=par, fn=fn, gr=gr, track=track,
-                                        best_val_sofar=if (track) {min(tracked_vals)} else {Inf})
+    locoptouts[[i]] <- mixopt_coorddesc(
+      par=par, fn=fn, gr=gr, track=track,
+      best_val_sofar=if (track) {min(tracked_vals)} else {Inf}
+    )
     counts_function <- counts_function + locoptouts[[i]]$counts[['function']]
     if (track) {
       tracked_pars <- c(tracked_pars, locoptouts[[i]]$track$par)

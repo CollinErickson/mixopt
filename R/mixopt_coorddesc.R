@@ -1,6 +1,10 @@
 #' @export
 #'
 #' @rdname mixopt
+#' @param maxtime Maximum time to run in seconds. Not an exact limit, only
+#' checks occasionally.
+#'
+#' @references https://en.wikipedia.org/wiki/Coordinate_descent
 #'
 #' @examples
 #' # Simple 1D example
@@ -16,6 +20,7 @@
 #'                                  (4.5-x[[1]])^2})
 mixopt_coorddesc <- function(par, fn, gr=NULL, ..., method,
                              maxiter=100, maxeval=NULL,
+                             maxtime=NULL,
                              verbose=0,
                              track=FALSE) {
   # print(par)
@@ -36,6 +41,11 @@ mixopt_coorddesc <- function(par, fn, gr=NULL, ..., method,
     stopifnot(is.numeric(maxeval), length(maxeval) == 1, maxeval >= 1,
               abs(maxeval - as.integer(maxeval)) < 1e-8)
   }
+  if (is.null(maxtime)) {
+    maxtime <- Inf
+  }
+  stopifnot(!is.null(maxtime), is.numeric(maxtime),
+            length(maxtime) == 1, maxtime >= 0)
 
   # Set up tracking
   if (track) {
@@ -80,7 +90,9 @@ mixopt_coorddesc <- function(par, fn, gr=NULL, ..., method,
   starttime <- Sys.time()
   # Iterate with while loop ----
   # An iteration goes over each variable separately
-  while(iter <= maxiter && counts_function < maxeval) {
+  while(iter <= maxiter &&
+        counts_function < maxeval &&
+        as.numeric(Sys.time() - starttime, units='secs') < maxtime) {
     iter <- iter + 1
     par_val_before <- par_val
     if (verbose >= 2) {
@@ -171,6 +183,13 @@ mixopt_coorddesc <- function(par, fn, gr=NULL, ..., method,
 
       # Break if exceeded max function evals
       if (counts_function >= maxeval) {
+        break
+      }
+      # Break if exceeded maxtime
+      if (as.numeric(Sys.time() - starttime, units='secs') > maxtime) {
+        if (verbose >= 4) {
+          cat("Breaking coorddesc b/c exceeded maxtime\n")
+        }
         break
       }
     } # end for (ipar in 1:npar)

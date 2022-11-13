@@ -67,3 +67,23 @@ test_that("coorddesc unordered", {
   expect_equal(cdout$par[[1]], 5)
   expect_equal(cdout$val, .16)
 })
+
+
+test_that("coorddesc cts and un", {
+  expect_error(
+    {
+      capture.output({
+        cdout <- mixopt_coorddesc(par=list(mopar_cts(5,15),
+                                           mopar_unordered(2:8, start=2)),
+                                  fn=function(x) {
+                                    (x[[1]] - 11.1) ^ 2 * (x[[2]] - 5.4) ^ 2 +
+                                      abs(x[[1]] - 11.1) + abs(x[[2]] - 5.4)
+                                  }, verbose=1e5)
+      })
+    }, NA
+  )
+  expect_equal(length(cdout$par), 2)
+  expect_equal(cdout$par[[1]], 11.1)
+  expect_equal(cdout$par[[2]], 5)
+  expect_equal(cdout$val, .4)
+})

@@ -1,5 +1,7 @@
 # mixopt 0.1.0.9000
 
+* Fixed error in `index_line_search`
+
 # mixopt 0.1.0
 
 * Created package

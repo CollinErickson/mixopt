@@ -8,6 +8,34 @@ test_that("index_line_search", {
   expect_equal(ils1$ind, 1)
   expect_equal(ils1$x, -51)
   expect_equal(ils1$val, 49^2)
+
+  expect_error(ils1 <- index_line_search(function(x) {(x)^2}, 0, plot="x"), NA)
+  expect_equal(ils1$ind, 1)
+  expect_equal(ils1$x, 0)
+  expect_equal(ils1$val, 0)
+
+  expect_error(ils1 <- index_line_search(function(x) {(x)^2}, 0:1, plot="x"), NA)
+  expect_equal(ils1$ind, 1)
+  expect_equal(ils1$x, 0)
+  expect_equal(ils1$val, 0)
+
+  expect_error(ils1 <- index_line_search(function(x) {-(x)^2}, 0:1, plot="x"), NA)
+  expect_equal(ils1$ind, 2)
+  expect_equal(ils1$x, 1)
+  expect_equal(ils1$val, -1)
+
+  expect_error(ils1 <- index_line_search(function(x) {(x)^2}, -1:1, plot="x"), NA)
+  expect_equal(ils1$ind, 2)
+  expect_equal(ils1$x, 0)
+  expect_equal(ils1$val, 0)
+
+  # High verbose
+  expect_error(capture.output({
+    ils1 <- index_line_search(function(x) {(x)^2}, -20:88,
+                              plot="ind", verbose = 100)}), NA)
+  expect_equal(ils1$ind, 21)
+  expect_equal(ils1$x, 0)
+  expect_equal(ils1$val, 0)
 })
 
 test_that("full_index_line_search", {

@@ -62,6 +62,16 @@ index_line_search <- function(f, xarray,
       ))
     }
   }
+
+  # If not a decreasing direction, return starting point
+  if (y1 < y2) {
+    return(list(
+      ind=1,
+      x=xarray[1],
+      val=y1
+    ))
+  }
+
   if (maxind == 3) {
     y3 <- f2(3)
     ind <- which.min(c(y1, y2, y3))[1]

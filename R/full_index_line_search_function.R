@@ -105,10 +105,10 @@ full_index_line_search <- function(f, xarray, startind, plot="none",
 
   if (direction == "L") {
     # If left is lower, go left
-    out <- index_line_search(f=f, xarray=rev(xarray[1:(startind)]),
+    out <- index_line_search(f=f, xarray=rev(xarray[1:(startind-1)]),
                              plot=plot, verbose=verbose,
                              y1=yleft1)
-    out_ind_corrected <- startind - out$ind + 1
+    out_ind_corrected <- startind - out$ind #+ 1
     return(list(ind=out_ind_corrected,
                 x=xarray[out_ind_corrected],
                 val=out$val

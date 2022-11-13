@@ -1,0 +1,27 @@
+library(testthat)
+
+# I shouldn't need this line, but can't find the function without it. Weird.
+library(mixopt)
+
+test_that("index_line_search", {
+  expect_error(ils1 <- index_line_search(function(x) {(-x-100)^2}, (-51):53, plot="x"), NA)
+  expect_equal(ils1$ind, 1)
+  expect_equal(ils1$x, -51)
+  expect_equal(ils1$val, 49^2)
+})
+
+test_that("full_index_line_search", {
+  f1 <- function(x) {ifelse(x==0, 100, ifelse(abs(x)==1, 1-x/1e5, 10+abs(x)/1e4))}
+  # cbind(-10:10, f1(-10:10))
+  expect_error(fils1 <- full_index_line_search(f1, (-10):10, 11), NA)
+  expect_equal(fils1$ind, 12)
+  expect_equal(fils1$x, 1)
+  expect_equal(fils1$val, 1-1/1e5)
+
+  f2 <- function(x) {ifelse(x==0, 100, ifelse(abs(x)==1, 1+x/1e5, 10+abs(x)/1e4))}
+  # cbind(-10:10, f2(-10:10))
+  expect_error(fils2 <- full_index_line_search(f2, (-10):10, 11), NA)
+  expect_equal(fils2$ind, 10)
+  expect_equal(fils2$x, -1)
+  expect_equal(fils2$val, 1-1/1e5)
+})

@@ -4,6 +4,8 @@ test_that("verify par", {
   expect_error(verify_par(1))
   expect_error(mopar_cts(1,5), NA)
   expect_error(c(mopar_cts(1,5), mopar_ordered(1:5)), NA)
+  expect_error(verify_par(c(mopar_cts(1,5))), NA)
+  expect_error(verify_par(list(1,5)))
 })
 
 test_that("mopar_cts", {
@@ -44,7 +46,7 @@ test_that("mopar_ordered", {
   expect_equal(length(s1), 8)
   expect_true(all(s1 %in% p1$values))
   # Error if any duplicates
-  expect_error(mopar_ordered(c(1,2,3,4,5,5)))
+  expect_error(capture.output(mopar_ordered(c(1,2,3,4,5,5))))
   # Check print
   expect_error(cop1 <- capture.output(print(p1)), NA)
   expect_equal(length(cop1), 3)
@@ -56,10 +58,18 @@ test_that("mopar_ordered", {
   expect_equal(length(cop100), 3)
   expect_equal(cop100[1], "mopar_ordered with 100 values")
   expect_equal(cop100[2], "\t values = 1 2 3 4 5 6 7 8 9 10 ... (80 more values) ... 91 92 93 94 95 96 97 98 99 100")
+  expect_error(p100$q(runif(10)), NA)
+  # Single value
+  expect_error(g1 <- mopar_ordered('a'), NA)
+  expect_equal(g1$sample(10), rep('a', 10))
+  expect_equal(g1$q(runif(10)), rep('a', 10))
+
+  # print for ordered/unordered doesn't work on other objects
+  expect_error(mixopt:::print_mixopt_par_ordered_or_unordered(3))
 })
 
 test_that("mopar_unordered", {
-  p1 <- mopar_unordered(1:10)
+  expect_error(p1 <- mopar_unordered(1:10), NA)
   expect_true("mixopt_par" %in% class(p1))
   expect_true("mixopt_par_unordered" %in% class(p1))
   expect_true("list" %in% class(p1))
@@ -69,7 +79,7 @@ test_that("mopar_unordered", {
   expect_equal(length(s1), 8)
   expect_true(all(s1 %in% p1$values))
   # Error if any duplicates
-  expect_error(mopar_ordered(c(1,2,3,4,5,5)))
+  expect_error(capture.output(mopar_unordered(c(1,2,3,4,5,5))))
   # Check print
   expect_error(cop1 <- capture.output(print(p1)), NA)
   expect_equal(length(cop1), 3)
@@ -81,6 +91,11 @@ test_that("mopar_unordered", {
   expect_equal(length(cop100), 3)
   expect_equal(cop100[1], "mopar_unordered with 100 values")
   expect_equal(cop100[2], "\t values = 1 2 3 4 5 6 7 8 9 10 ... (80 more values) ... 91 92 93 94 95 96 97 98 99 100")
+  expect_error(p100$q(runif(100)), NA)
+  # Single value
+  expect_error(g1 <- mopar_unordered('a'), NA)
+  expect_equal(g1$sample(10), rep('a', 10))
+  expect_equal(g1$q(runif(10)), rep('a', 10))
 })
 
 test_that("c on mopar", {
@@ -91,5 +106,5 @@ test_that("c on mopar", {
   }, NA)
   expect_equal(length(cpar), 2)
   # Check print
-  expect_error(print(cpar), NA)
+  expect_error(capture.output(print(cpar)), NA)
 })

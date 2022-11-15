@@ -43,8 +43,6 @@ E.g. 1:1e7 may be too big to store in memory.
 
 * verify_par should return TRUE instead of NULL
 
-* Fix 3.5 in indexlinesearchfunction
-
-* wrong: index_line_search(function(x) {(-x-100)^2}, (-51):53, plot="x")
-
 * make sure par is valid at end
+
+* If single par, allow input as just mopar, not list.

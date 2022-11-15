@@ -87,3 +87,11 @@ test_that("coorddesc cts and un", {
   expect_equal(cdout$par[[2]], 5)
   expect_equal(cdout$val, .4)
 })
+
+test_that("stopifnot", {
+  expect_error({
+    cdout <- mixopt_coorddesc(par=list(mopar_cts(2,8)),
+                              fn=function(x) {(4.5-x[[1]])^2},
+                              maxeval = .3)
+  })
+})

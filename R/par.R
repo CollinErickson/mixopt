@@ -21,29 +21,7 @@ verify_par <- function(par) {
     }
     stopifnot("mixopt_par" %in% class(par[[i]]))
   }
-  # start_par <- list()
-  # for (i in 1:length(par)) {
-  #   stopifnot(is.character(par[[i]][[1]]))
-  #   stopifnot(length(par[[i]][[1]]) == 1)
-  #   if (par[[i]][[1]] %in% c("cts")) {
-  #     stopifnot(is.numeric(par[[i]][[2]]))
-  #     stopifnot(length(par[[i]][[2]]) == 2)
-  #     stopifnot(par[[i]][[2]][1] <= par[[i]][[2]][2])
-  #     # stopifnot(par[[i]][[2]])
-  #     if (length(par[[i]]) > 2.5) {
-  #       stopifnot(is.numeric(par[[i]][[3]]))
-  #       stopifnot(length(par[[i]][[1]]) == 1)
-  #       stopifnot(par[[i]][[2]][[1]] <= par[[i]][[3]])
-  #       stopifnot(par[[i]][[2]][[2]] >= par[[i]][[3]])
-  #       start_par[[i]] <- par[[i]][[3]]
-  #     } else {
-  #       start_par[[i]] <- mean(par[[i]][[2]])
-  #     }
-  #   } else {
-  #     stop(paste0("par ", i, "doesn't have proper type"))
-  #   }
-  # }
-  # return(start_par)
+  return(TRUE)
 }
 
 #' Continuous variable

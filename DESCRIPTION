@@ -1,7 +1,7 @@
 Package: mixopt
 Type: Package
 Title: Mixed Variable Optimization
-Version: 0.1.0.9000
+Version: 0.1.1
 Author: Collin Erickson
 Maintainer: Collin Erickson <collinberickson@gmail.com>
 Description: Mixed variable optimization for non-linear functions.
@@ -19,5 +19,5 @@ Encoding: UTF-8
 LazyData: true
 URL: https://github.com/CollinErickson/mixopt
 BugReports: https://github.com/CollinErickson/mixopt/issues
-RoxygenNote: 7.2.1
+RoxygenNote: 7.2.2
 Config/testthat/edition: 3

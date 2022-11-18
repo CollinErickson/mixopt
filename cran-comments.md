@@ -1,7 +1,6 @@
-I submitted on 11/9/22 and was rejected.
-I do not have any specific references, but could add general references to
-coordinate descent optimization.
-I fixed the examples with commented out lines and dontrun.
+This package was first accepted to CRAN on 11/11/22,
+but I found a few breaking errors that are affecting my other package.
+I have fixed the errors in this version.
 
 ## Test environments
 

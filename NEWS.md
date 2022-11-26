@@ -2,6 +2,8 @@
 
 * Fixed two breaking errors in `index_line_search`.
 
+* Accepted to CRAN on 11/19/2022.
+
 # mixopt 0.1.0
 
 * Created package

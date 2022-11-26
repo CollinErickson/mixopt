@@ -59,6 +59,9 @@ mixopt_coorddesc <- function(par, fn, gr=NULL, ..., method,
   stopifnot(length(par_par) == npar)
   # par_val <- Inf
 
+  # Convert to mixopt_list
+  class(par_par) <- c("mixopt_list", class(par_par))
+
   # Evaluate initial parameter if first to evaluated
   # Only problem is that optim will duplicate it
   # if (iter == 1 && is.infinite(par_val)) {

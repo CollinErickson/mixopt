@@ -1,3 +1,7 @@
+# mixopt 0.1.1.9000
+
+* Added indexing so it can work with standard functions.
+
 # mixopt 0.1.1
 
 * Fixed two breaking errors in `index_line_search`.

@@ -46,3 +46,14 @@ E.g. 1:1e7 may be too big to store in memory.
 * make sure par is valid at end
 
 * If single par, allow input as just mopar, not list.
+
+* optim: first eval reads existing value
+
+* Option for multipredict. Use for multistart first stage.
+
+* Avoid list index issue by making new object type?
+  * mopar_list: new indexing func to allow single indexes.
+
+* Use grad for cts
+
+* Use fngr

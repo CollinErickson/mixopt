@@ -2,7 +2,7 @@
 % Please edit documentation in R/mixopt_list.R
 \name{[.mixopt_list}
 \alias{[.mixopt_list}
-\title{Title}
+\title{Index mixopt_list}
 \usage{
 \method{[}{mixopt_list}(x, i, value)
 }
@@ -14,13 +14,14 @@
 \item{value}{value}
 }
 \value{
-value
+value at index
 }
 \description{
-Title
+Avoid standard list indexing which returns list for single index.
 }
 \examples{
 a <- list(1,4,'c')
 class(a) <- "mixopt_list"
 a[3]
+a[2:3]
 }

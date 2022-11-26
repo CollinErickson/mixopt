@@ -26,3 +26,36 @@ test_that("multistart", {
   }, NA)
 
 })
+
+test_that("optim examples", {
+  fr <- function(x) {   ## Rosenbrock Banana function
+    x1 <- x[1]
+    x2 <- x[2]
+    100 * (x2 - x1 * x1)^2 + (1 - x1)^2
+  }
+  optim(c(-1.2,1), fr)
+  expect_no_error(
+    mixopt_multistart(
+      c(mopar_cts(-5,5),
+        mopar_cts(-5,5)),
+      fr
+    )
+  )
+})
+
+test_that("func using sum/slice", {
+  f <- function(x) {sum(x)}
+  mixopt_multistart(
+    c(mopar_cts(0,1),
+      mopar_cts(0,1)),
+    f
+  )
+
+  f <- function(x) {sum(x[1:2]) - x[3]}
+  mixopt_multistart(
+    c(mopar_cts(0,1),
+      mopar_cts(0,1),
+      mopar_cts(0,1)),
+    f
+  )
+})

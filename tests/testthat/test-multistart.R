@@ -13,10 +13,10 @@ test_that("multistart", {
   expect_equal(length(ms6$val), 1)
   expect_true(is.numeric(ms6$val))
   expect_equal(length(ms6$par), 2)
-  expect_equal(class(ms6$par), "list")
+  expect_equal(class(ms6$par), c("mixopt_list", "list"))
 
   # Check print
-  expect_error(print(ms6), NA)
+  expect_error(capture.output(print(ms6)), NA)
   expect_true(all(c("par", "val", "track", "counts", "runtime") %in% names(ms6)))
 
 

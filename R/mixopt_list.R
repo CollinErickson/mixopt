@@ -9,7 +9,7 @@
 #'
 #' @examples
 #' a <- list(1,4,'c')
-#' class('a') <- "mixopt_list"
+#' class(a) <- "mixopt_list"
 #' a[3]
 `[.mixopt_list` <- function(x, i, value) {
   # print("using new")

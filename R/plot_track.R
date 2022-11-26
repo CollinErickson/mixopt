@@ -30,13 +30,18 @@ plot_track <- function(out) {
   plots <- list()
   for (i in 1:length(out$track$par[[1]])) {
     dflist[[paste0("par", i)]] <- sapply(out$track$par, function(x) {x[[i]]})
-    plots[[length(plots) + 1]] <- ggplot2::ggplot(as.data.frame(dflist),
-                                                  ggplot2::aes_string("iter", paste0("par", i), color="newbest")) +
+    plots[[length(plots) + 1]] <- ggplot2::ggplot(
+      as.data.frame(dflist),
+      # ggplot2::aes_string("iter", paste0("par", i), color="newbest")) +
+      ggplot2::aes(iter, .data[[paste0("par", i)]],
+                   color=newbest)) +
       ggplot2::geom_point()
   }
   # Add val
-  plots[[length(plots) + 1]] <- ggplot2::ggplot(as.data.frame(dflist),
-                                                ggplot2::aes_string("iter", "val", color="newbest")) +
+  plots[[length(plots) + 1]] <- ggplot2::ggplot(
+    as.data.frame(dflist),
+    # ggplot2::aes_string("iter", "val", color="newbest")) +
+    ggplot2::aes(iter, val, color=newbest)) +
     ggplot2::geom_point()
 
   # df <- as.data.frame(dflist)

@@ -75,9 +75,21 @@ full_index_line_search <- function(f, xarray, startind, plot="none",
   if (startind == 1) {
     direction <- "R"
     yright1 <- f2(startind+1)
+    if (ystart <= yright1) {
+      # No improvement in only direction
+      return(list(ind=startind,
+                  x=xarray[startind],
+                  val=ystart))
+    }
   } else if (startind == maxind) {
     direction <- "L"
     yleft1 <- f2(startind-1)
+    if (ystart <= yleft1) {
+      # No improvement in only direction
+      return(list(ind=startind,
+                  x=xarray[startind],
+                  val=ystart))
+    }
   } else {
     # Both directions are valid, so check both
     # ystart <- f2(startind)

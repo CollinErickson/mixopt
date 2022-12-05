@@ -20,8 +20,25 @@ value at index
 Avoid standard list indexing which returns list for single index.
 }
 \examples{
-a <- list(1,4,'c')
+a <- list(1,4,'c', 'g')
 class(a) <- "mixopt_list"
+a
 a[3]
 a[2:3]
+a[-(2:3)]
+
+b <- list(1,2,3,4,5)
+class(b) <- "mixopt_list"
+sum(b)
+b^2
+b+b
+b-b
+b*b
+b/b
+c(b)
+c(b, b)
+c(b, 1)
+c(1, b)
+c(a, b, a)
+c_mixopt_list(0, 1, 2, 3, 4, a, 5, 6, 7, 8, b, 9)
 }

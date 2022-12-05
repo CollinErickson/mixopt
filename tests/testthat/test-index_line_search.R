@@ -53,3 +53,55 @@ test_that("full_index_line_search", {
   expect_equal(fils2$x, -1)
   expect_equal(fils2$val, 1-1/1e5)
 })
+
+test_that("start point is best", {
+  # This gave error before
+  xarray <- c(.1,.2,.3,.4)
+  ff <- function(x) {
+    ifelse(x < .15, -.71,
+           ifelse(x < .25, -.0067,
+                  ifelse(x < .35, -2e-16, 0)))
+  }
+  expect_no_error({
+    fils3 <- full_index_line_search(
+      f=ff,
+      xarray=xarray,
+      startind = 1
+    )
+  })
+  expect_equal(fils3$ind, 1)
+  expect_equal(fils3$x, .1)
+  expect_equal(fils3$val, -.71)
+  rm(fils3)
+  expect_no_error({
+    fils3b <- full_index_line_search(
+      f=ff,
+      xarray=xarray,
+      startind = 1,ystart=ff(xarray[1])
+    )
+  })
+  expect_equal(fils3b$ind, 1)
+  expect_equal(fils3b$x, .1)
+  expect_equal(fils3b$val, -.71)
+  rm(fils3b)
+
+
+  # This gave error before
+  xarray <- c(.1,.2,.3,.4)
+  ff <- function(x) {
+    ifelse(x >.35, -.71,
+           ifelse(x > .25, -.0067,
+                  ifelse(x > .15, -2e-16, 0)))
+  }
+  expect_no_error({
+    fils3 <- full_index_line_search(
+      f=ff,
+      xarray=xarray,
+      startind = 4
+    )
+  })
+  expect_equal(fils3$ind, 4)
+  expect_equal(fils3$x, .4)
+  expect_equal(fils3$val, -.71)
+  rm(fils3)
+})

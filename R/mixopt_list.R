@@ -10,20 +10,43 @@
 #' @export
 #'
 #' @examples
-#' a <- list(1,4,'c')
+#' a <- list(1,4,'c', 'g')
 #' class(a) <- "mixopt_list"
+#' a
 #' a[3]
 #' a[2:3]
+#' a[-(2:3)]
+#'
+#' b <- list(1,2,3,4,5)
+#' class(b) <- "mixopt_list"
+#' sum(b)
+#' b^2
+#' b+b
+#' b-b
+#' b*b
+#' b/b
+#' c(b)
+#' c(b, b)
+#' c(b, 1)
+#' c(1, b)
+#' c(a, b, a)
+#' c_mixopt_list(0, 1, 2, 3, 4, a, 5, 6, 7, 8, b, 9)
 `[.mixopt_list` <- function(x, i, value) {
-  # browser()
-  # print("using new")
-  # print(x)
   if (length(i) > 1.5) {
     # warning("[.mixopt_list doesn't work with multiple indexes")
     class(x) <- "list"
     x <- x[i]
     class(x) <- "mixopt_list"
     return(x)
+  }
+  if (any(i < 0)) {
+    if (any(i > 0)) {
+      stop(
+        "Can't mix positive and negative indexes when subsetting mixopt_list")
+    }
+    i <- i[i<0]
+    actual_i <- setdiff(1:length(x), as.integer(-i))
+    return(x[actual_i])
   }
   x[[i]]
 }
@@ -46,6 +69,72 @@ print.mixopt_list <- function(x, ...) {
   cat("\n")
 }
 
+#' Checks if object is mixopt_list
+#'
+#' @param x Object
+#' @return TRUE if x has class "mixopt_list"
+#'
+#' @export
+is.mixopt_list <- function(x) {
+  "mixopt_list" %in% class(x)
+}
+
+#' Combines mixopt_list objects
+#'
+#' @param x Object
+#'
+#' @param ... Additional objects
+#' @return A combined mixopt_list
+#'
+#' @export
+c_mixopt_list <- function(x, ...) {
+  # browser()
+  if (!is.mixopt_list(x)) {
+    # browser()
+    x <- as.list(x)
+    class(x) <- "mixopt_list"
+    # do.call(c, x, ...)
+  }
+
+  c(x, ...)
+}
+
+#' @export
+c.mixopt_list <- function(x, ...) {
+  dots <- list(...)
+  if (length(dots) < .5) {
+    return(x)
+  }
+  if (length(dots) > 1.5) {
+    for (i in 1:length(dots)) {
+      x <- c(x, dots[[i]])
+    }
+    return(x)
+    # t1 <- c(x, dots[[1]])
+    # dotsleft <- dots[2:]
+    # if (length(dotsleft) == 1) {
+    #   return(c(t1, dotsleft[[1]]))
+    # }
+    # return(do.call(c(t1, dots))
+  }
+  a <- x
+  b <- list(...)[[1]]
+  # browser()
+  if (is.mixopt_list(a)) {
+    class(a) <- "list"
+  } else {
+    a <- as.list(a)
+  }
+  if (is.mixopt_list(b)) {
+    class(b) <- "list"
+  } else {
+    b <- as.list(b)
+  }
+  out <- c(a, b)
+  class(out) <- "mixopt_list"
+  out
+}
+
 
 # mixopt_list_mathfunc <- function()
 
@@ -59,4 +148,49 @@ sum.mixopt_list <- function(..., na.rm=FALSE) {
     s <- s + dot[i]
   }
   s
+}
+
+
+#' @export
+`^.mixopt_list` <- function(e1, e2) {
+  for (i in 1:length(e1)) {
+    e1[i] <- e1[i]^e2
+  }
+  e1
+}
+
+#' @export
+`+.mixopt_list` <- function(e1, e2) {
+  out <- numeric(max(length(e1), length(e2)))
+  for (i in 1:max(length(e1), length(e2))) {
+    out[i] <- e1[min(i, length(e1))] + e2[min(i, length(e2))]
+  }
+  out
+}
+
+#' @export
+`-.mixopt_list` <- function(e1, e2) {
+  out <- numeric(max(length(e1), length(e2)))
+  for (i in 1:max(length(e1), length(e2))) {
+    out[i] <- e1[min(i, length(e1))] - e2[min(i, length(e2))]
+  }
+  out
+}
+
+#' @export
+`*.mixopt_list` <- function(e1, e2) {
+  out <- numeric(max(length(e1), length(e2)))
+  for (i in 1:max(length(e1), length(e2))) {
+    out[i] <- e1[min(i, length(e1))] * e2[min(i, length(e2))]
+  }
+  out
+}
+
+#' @export
+`/.mixopt_list` <- function(e1, e2) {
+  out <- numeric(max(length(e1), length(e2)))
+  for (i in 1:max(length(e1), length(e2))) {
+    out[i] <- e1[min(i, length(e1))] / e2[min(i, length(e2))]
+  }
+  out
 }

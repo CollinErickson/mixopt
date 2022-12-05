@@ -88,6 +88,30 @@ test_that("coorddesc cts and un", {
   expect_equal(cdout$val, .4)
 })
 
+
+test_that("cts, ord, un", {
+  expect_error(
+    {
+      capture.output({
+        cdout <- mixopt_coorddesc(par=list(mopar_cts(5,15, start=8.4),
+                                           mopar_ordered(5:11, start=11),
+                                           mopar_unordered(2:8, start=2)),
+                                  fn=function(x) {
+                                    (x[[1]] - 11.1) ^ 2 * (x[[2]] - 5.4) ^ 2 +
+                                      abs(x[[1]] - 11.1) + abs(x[[2]] - 5.4) +
+                                      x[3]^2
+                                  }, verbose=1e5, track=T)
+      })
+    }, NA
+  )
+  expect_equal(length(cdout$par), 3)
+  expect_equal(cdout$par[[1]], 11.1)
+  expect_equal(cdout$par[[3]], 2)
+  # expect_equal(cdout$val, .4)
+  # Make sure start is being used
+  expect_equal(unlist(cdout$track$par[[1]]), c(8.4, 11, 2))
+})
+
 test_that("stopifnot", {
   expect_error({
     cdout <- mixopt_coorddesc(par=list(mopar_cts(2,8)),

@@ -3,26 +3,35 @@
 #' @rdname mixopt
 #' @param maxtime Maximum time to run in seconds. Not an exact limit, only
 #' checks occasionally.
+#' @param control Parameters for optimizing.
+#' @param maxblocksize The maximum number of continuous dimensions that should
+#' be placed into a single block.
 #'
 #' @references https://en.wikipedia.org/wiki/Coordinate_descent
 #'
 #' @examples
 #' # Simple 1D example
-#' mixopt_coorddesc(par=list(mopar_cts(2,8)), fn=function(x) {(4.5-x[1])^2})
+#' mixopt_blockcd(par=list(mopar_cts(2,8)), fn=function(x) {(4.5-x[1])^2})
+#' # With gradient (isn't faster)
+#' mixopt_blockcd(par=list(mopar_cts(2,8)), fn=function(x) {(4.5-x[1])^2},
+#'                gr=function(x) {-2*(4.5-x[1])})
 #'
 #' # 1D discrete ordered
-#' mixopt_coorddesc(par=list(mopar_ordered(100:10000)),
+#' mixopt_blockcd(par=list(mopar_ordered(100:10000)),
 #'                  fn=function(x) {(x[1] - 500.3)^2})
 #'
 #' # 2D: one continuous, one factor
-#' mixopt_coorddesc(par=list(mopar_cts(2,8), mopar_unordered(letters[1:6])),
+#' mixopt_blockcd(par=list(mopar_cts(2,8), mopar_unordered(letters[1:6])),
 #'                  fn=function(x) {ifelse(x[2] == 'b', -1, 0) +
 #'                                  (4.5-x[1])^2})
-mixopt_coorddesc <- function(par, fn, gr=NULL, ..., method,
-                             maxiter=100, maxeval=NULL,
-                             maxtime=NULL,
-                             verbose=0,
-                             track=FALSE) {
+mixopt_blockcd <- function(par, fn, gr=NULL, ...,
+                           control=list(),
+                           maxblocksize=NULL,
+                           method,
+                           maxiter=100, maxeval=NULL,
+                           maxtime=NULL,
+                           verbose=0,
+                           track=FALSE) {
   # print(par)
 
   # Verify that par are valid
@@ -46,6 +55,15 @@ mixopt_coorddesc <- function(par, fn, gr=NULL, ..., method,
   }
   stopifnot(!is.null(maxtime), is.numeric(maxtime),
             length(maxtime) == 1, maxtime >= 0)
+  stopifnot(is.null(maxblocksize) ||
+              (is.numeric(maxblocksize) && length(maxblocksize) == 1))
+  # Check control
+  stopifnot(is.list(control))
+  if (is.null(control$reltol)) {
+    reltol <- sqrt(.Machine$double.eps)
+  } else {
+    stopifnot(is.numeric(reltol), length(reltol)==1)
+  }
 
   # Set up tracking
   if (track) {
@@ -88,8 +106,65 @@ mixopt_coorddesc <- function(par, fn, gr=NULL, ..., method,
     best_val_sofar_input <- Inf
   }
 
+  # Set up blocks ----
+  partypes <- sapply(par, function(m) {class(m)[2]})
+  stopifnot(length(partypes)==length(par), is.character(partypes),
+            partypes %in% c('mixopt_par_cts', 'mixopt_par_ordered',
+                            'mixopt_par_unordered'))
+  nblock <- 0
+  blockinds <- list()
+  blockclass <- character()
+  inds_cts <- which(partypes == 'mixopt_par_cts')
+  inds_ord <- which(partypes == 'mixopt_par_ordered')
+  inds_unord <- which(partypes == 'mixopt_par_unordered')
+  stopifnot(length(inds_cts) + length(inds_ord) +
+              length(inds_unord) == length(par))
+  # All cts go into first block unless maxblocksize
+  if (length(inds_cts) > .5) {
+    if (is.null(maxblocksize)) {
+      nblock <- nblock + 1
+      blockinds[[nblock]] <- inds_cts
+      blockclass[[nblock]] <- "mixopt_par_cts"
+    } else {
+      # browser()
+      numctsblocks <- ceiling(length(inds_cts) / floor(maxblocksize))
+      stopifnot(numctsblocks >= 1,
+                all.equal(numctsblocks, round(numctsblocks)))
+      ctsassignments <- sample(rep(1:numctsblocks,
+                                   maxblocksize)[1:length(inds_cts)],
+                               length(inds_cts),
+                               replace=FALSE)
+      for (i in 1:numctsblocks) {
+        nblock <- nblock + 1
+        blockinds[[nblock]] <- inds_cts[ctsassignments == i]
+        blockclass[[nblock]] <- "mixopt_par_cts"
+      }
+      if (verbose >= 6) {
+        cat("cts block assignments are\n")
+        print(blockinds)
+      }
+    }
+  }
+  # Ordered and unordered go into own blocks
+  for (i in seq_along(inds_ord)) {
+    nblock <- nblock + 1
+    blockinds[[nblock]] <- inds_ord[i]
+    blockclass[[nblock]] <- "mixopt_par_ordered"
+  }
+  for (i in seq_along(inds_unord)) {
+    nblock <- nblock + 1
+    blockinds[[nblock]] <- inds_unord[i]
+    blockclass[[nblock]] <- "mixopt_par_unordered"
+  }
+
+  stopifnot(is.character(blockclass),
+            blockclass %in% c('mixopt_par_cts', 'mixopt_par_ordered',
+                              'mixopt_par_unordered'),
+            sort(unlist(blockinds)) == 1:length(par))
+
   iter <- 0
   counts_function <- 1 # Evaluated once above
+  counts_gradient <- 0
   starttime <- Sys.time()
   # Iterate with while loop ----
   # An iteration goes over each variable separately
@@ -106,18 +181,19 @@ mixopt_coorddesc <- function(par, fn, gr=NULL, ..., method,
       print(par_par)
     }
     # Loop over pars ----
-    for (ipar in 1:npar) {
+    for (iblock in 1:nblock) {
+      inds_iblock <- blockinds[[iblock]]
       best_val_sofar <- min(par_val, best_val_sofar_input)
       fnipar <- function(pari) {
         x <- par_par
-        x[[ipar]] <- pari
+        x[inds_iblock] <- pari
         fnx <- fn(x)
 
         if (verbose >= 10) {
           if (is.na(pari)) {
             stop("pari is NA in coorddesc")
           }
-          cat("  ipar=", ipar, " set at ", pari, " evaluates to ",
+          cat("  iblock=", iblock, " set at ", pari, " evaluates to ",
               signif(fnx, 8), "\n")
         }
 
@@ -130,18 +206,55 @@ mixopt_coorddesc <- function(par, fn, gr=NULL, ..., method,
         }
         fnx
       }
-      if ("mixopt_par_cts" %in% class(par[[ipar]])) {
+      if (blockclass[iblock] == "mixopt_par_cts") {
         ## cts ----
-        # Optimize over 1-D
-        optout <- optim(par=par_par[[ipar]], fn=fnipar,
-                        method="L-BFGS-B",
-                        lower=par[[ipar]]$lower,
-                        upper=par[[ipar]]$upper,
-                        control=list(maxit=30))
+        # Use gradient
+        if (is.null(gr)) {
+          gripar=NULL
+        } else {
+          gripar <- function(pari) {
+            x <- par_par
+            x[inds_iblock] <- pari
+            grxall <- gr(x)
+            grx <- grxall[inds_iblock]
 
-        par_par[[ipar]] <- optout$par
+            if (verbose >= 10) {
+              if (is.na(pari)) {
+                stop("pari is NA in coorddesc gr")
+              }
+              cat("  iblock=", iblock, " set at ", pari, " grad evaluates to ",
+                  signif(grx, 8), "\n")
+            }
+
+            counts_gradient <<- counts_gradient + 1
+            # if (track) {
+            #   tracked_pars[[length(tracked_pars) + 1]] <<- x
+            #   tracked_vals[[length(tracked_vals) + 1]] <<- fnx
+            #   tracked_newbest[[length(tracked_newbest) + 1]] <<-
+            #     (fnx < best_val_sofar)
+            # }
+            grx
+          }
+        }
+        # Optimize over all cts dims
+        control_list <- list()
+        if (nblock > 1.5) {control_list$maxit=30}
+        optout <- optim(par=par_par[blockinds[[iblock]]],
+                        fn=fnipar,
+                        gr=gripar,
+                        method="L-BFGS-B",
+                        # lower=par[[ipar]]$lower,
+                        # upper=par[[ipar]]$upper,
+                        lower=sapply(blockinds[[iblock]],
+                                     function(j) {par[[j]]$lower}),
+                        upper=sapply(blockinds[[iblock]],
+                                     function(j) {par[[j]]$upper}),
+                        control=control_list)
+
+        par_par[blockinds[[iblock]]] <- optout$par
         par_val <- optout$val
-      } else if ("mixopt_par_ordered" %in% class(par[[ipar]])) {
+      } else if (blockclass[iblock] == "mixopt_par_ordered") {
+        ipar <- blockinds[[iblock]]
         ## ordered ----
         # Optimize over param
         if (length(par[[ipar]]$values) > 1.5) {
@@ -160,7 +273,8 @@ mixopt_coorddesc <- function(par, fn, gr=NULL, ..., method,
 
         } # End at least 2 values.
         # Else only single value, don't do anything.
-      } else if ("mixopt_par_unordered" %in% class(par[[ipar]])) {
+      } else if (blockclass[iblock] == "mixopt_par_unordered") {
+        ipar <- blockinds[[iblock]]
         ## unordered ----
         # Randomly try other param values b/c no info from order
         param_values <- setdiff(par[[ipar]]$values, par_par[[ipar]])
@@ -182,7 +296,7 @@ mixopt_coorddesc <- function(par, fn, gr=NULL, ..., method,
         }
       } else {
         stop("bad par")
-      }
+      } # End all par options
 
       # Break if exceeded max function evals
       if (counts_function >= maxeval) {
@@ -195,17 +309,29 @@ mixopt_coorddesc <- function(par, fn, gr=NULL, ..., method,
         }
         break
       }
-    } # end for (ipar in 1:npar)
+    } # end for (iblock in 1:nblocks)
 
+    if (par_val_before < par_val) {
+      warning(paste0("par_val_before < par_val", par_val_before, par_val))
+    }
     # Break if no improvement
-    if (par_val >= par_val_before) {
+    if (par_val >= par_val_before ||
+        (((par_val_before - par_val) / par_val_before) <
+         reltol * (abs(par_val) + reltol))) {
       if (verbose >= 3) {
         cat("No improvement, breaking while loop\n")
       }
       break
     }
+    # Break if only one block and it is cts
+    if (nblock == 1 && blockclass[1] == "mixopt_par_cts") {
+      if (verbose >= 6) {
+        cat("Only 1 block and cts, breaking\n")
+      }
+      break
+    }
   }
-  # End optim ----
+  # Completed optim ----
   endtime <- Sys.time()
 
   outlist <- list(par=par_par,
@@ -221,7 +347,7 @@ mixopt_coorddesc <- function(par, fn, gr=NULL, ..., method,
       newbest=tracked_newbest
     )
   }
-  outlist$counts <- c("function"=counts_function, "gradient"=NA)
+  outlist$counts <- c("function"=counts_function, "gradient"=counts_gradient)
   outlist$runtime <- endtime - starttime
   # Add class
   class(outlist) <- c("mixopt_output_list", class(outlist))

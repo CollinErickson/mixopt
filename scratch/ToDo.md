@@ -48,4 +48,17 @@ Rosenbrock example from optim doc is a disaster in multistart.
 
 * Use fngr
 
-* ms and cd need to use mopar$start when they have it
+* Use numeric instead of mixopt_list when all are numeric
+
+* option for matrix/df evaluation. Useful for multistart init points. E.g., EI.
+
+* Need to stop earlier: waiting for 0 improvement is too slow, check what optim does
+
+* Replace coorddesc with blockcd with maxblocksize=1 to avoid repetitive code
+
+* Add control. Use reltol.
+
+* To have math funcs work on mixopt_lists, convert them to numeric when all
+numeric? Can also do that when subsetting if it removes non-numeric.
+
+* Fix bad full index line search when start is best.

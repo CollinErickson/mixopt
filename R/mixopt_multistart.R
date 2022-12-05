@@ -11,8 +11,8 @@
 #' # 2D
 #' library(ggplot2)
 #' library(dplyr)
-#' f6 <- function(x) {-(-x[[1]]*.5*sin(.5*x[[1]])*1 - 1e-2*x[[2]]^2 +
-#'                        .2*x[[1]] - .3*x[[2]])}
+#' f6 <- function(x) {-(-x[1]*.5*sin(.5*x[1])*1 - 1e-2*x[2]^2 +
+#'                        .2*x[1] - .3*x[2])}
 #' ContourFunctions::cf_func(f6, xlim=c(0,100), ylim=c(-100,100))
 #' m6 <- mixopt_coorddesc(par=list(mopar_cts(0,100), mopar_cts(-100,100)),
 #'                        fn=f6, track = TRUE)
@@ -22,7 +22,8 @@
 #' plot_track(ms6)
 #' ContourFunctions::cf_func(f6, xlim=c(0,100), ylim=c(-100,100),
 #'                           gg = TRUE) +
-#'   geom_point(data=as.data.frame(matrix(unlist(ms6$track$par), ncol=2, byrow=TRUE)) %>%
+#'   geom_point(data=as.data.frame(matrix(unlist(ms6$track$par),
+#'                                        ncol=2, byrow=TRUE)) %>%
 #'                bind_cols(newbest=ms6$track$newbest),
 #'              aes(V1, V2, color=newbest), alpha=.5)
 mixopt_multistart <- function(par, fn, gr=NULL,
@@ -94,7 +95,7 @@ mixopt_multistart <- function(par, fn, gr=NULL,
     }
 
     # Run local optimizer
-    locoptouts[[i]] <- mixopt_coorddesc(
+    locoptouts[[i]] <- mixopt_blockcd(
       par=par, fn=fn, gr=gr, track=track,
       best_val_sofar=if (track) {min(tracked_vals)} else {Inf}
     )

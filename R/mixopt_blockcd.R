@@ -78,7 +78,9 @@ mixopt_blockcd <- function(par, fn, gr=NULL, ...,
   # par_val <- Inf
 
   # Convert to mixopt_list
-  class(par_par) <- c("mixopt_list", class(par_par))
+  # class(par_par) <- c("mixopt_list", class(par_par))
+  # but only if it can't be kept as numeric/char
+  par_par <- as.mixopt_list(par_par, TRUE)
 
   # Evaluate initial parameter if first to evaluated
   # Only problem is that optim will duplicate it

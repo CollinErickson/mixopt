@@ -69,13 +69,15 @@ mixopt_multistart <- function(par, fn, gr=NULL,
   for (i in 1:n0) {
     # Generate start points
     startpoints2[[i]] <- lapply(startpoints, function(x) {x[[i]]})
-    class(startpoints2[[i]]) <- c("mixopt_list", class(startpoints2[[i]]))
+    # class(startpoints2[[i]]) <- c("mixopt_list", class(startpoints2[[i]]))
+    startpoints2[[i]] <- as.mixopt_list(startpoints2[[i]], T)
     startpointsval[[i]] <- fn(startpoints2[[i]])
     counts_function <- counts_function + 1
     if (track) {
       tracked_pars[[length(tracked_pars) + 1]] <- startpoints2[[i]]
       tracked_vals[[length(tracked_vals) + 1]] <- startpointsval[[i]]
-      tracked_newbest[[length(tracked_newbest) + 1]] <- (if (i==1) {T} else {startpointsval[[i]] < min(startpointsval[1:(i-1)])})
+      tracked_newbest[[length(tracked_newbest) + 1]] <- (if (i==1) {T} else {
+        startpointsval[[i]] < min(startpointsval[1:(i-1)])})
     }
   }
 

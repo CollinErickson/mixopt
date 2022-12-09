@@ -1,7 +1,8 @@
 library(testthat)
 
 test_that("multistart", {
-  f6 <- function(x) {-(-x[[1]]*.5*sin(.5*x[[1]])*1 - 1e-2*x[[2]]^2 + .2*x[[1]] - .3*x[[2]])}
+  f6 <- function(x) {-(-x[[1]]*.5*sin(.5*x[[1]])*1 - 1e-2*x[[2]]^2 +
+                         .2*x[[1]] - .3*x[[2]])}
   # Make sure multistart runs
   expect_error({
     ms6 <- mixopt_multistart(par=list(mopar_cts(0,100), mopar_cts(-100,100)),
@@ -13,7 +14,8 @@ test_that("multistart", {
   expect_equal(length(ms6$val), 1)
   expect_true(is.numeric(ms6$val))
   expect_equal(length(ms6$par), 2)
-  expect_equal(class(ms6$par), c("mixopt_list", "list"))
+  # expect_equal(class(ms6$par), c("mixopt_list", "list"))
+  expect_true(is.numeric(ms6$par))
 
   # Check print
   expect_error(capture.output(print(ms6)), NA)
@@ -45,6 +47,15 @@ test_that("optim examples", {
 
 test_that("func using sum/slice", {
   f <- function(x) {sum(x)}
+  expect_no_error({
+    mixopt_multistart(
+      c(mopar_cts(0,1),
+        mopar_cts(0,1)),
+      f
+    )
+  })
+
+  f <- function(x) {cos(sum(sqrt(x)))}
   expect_no_error({
     mixopt_multistart(
       c(mopar_cts(0,1),

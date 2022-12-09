@@ -45,17 +45,21 @@ test_that("optim examples", {
 
 test_that("func using sum/slice", {
   f <- function(x) {sum(x)}
-  mixopt_multistart(
-    c(mopar_cts(0,1),
-      mopar_cts(0,1)),
-    f
-  )
+  expect_no_error({
+    mixopt_multistart(
+      c(mopar_cts(0,1),
+        mopar_cts(0,1)),
+      f
+    )
+  })
 
   f <- function(x) {sum(x[1:2]) - x[3]}
-  mixopt_multistart(
-    c(mopar_cts(0,1),
-      mopar_cts(0,1),
-      mopar_cts(0,1)),
-    f
-  )
+  expect_no_error({
+    mixopt_multistart(
+      c(mopar_cts(0,1),
+        mopar_cts(0,1),
+        mopar_cts(0,1)),
+      f
+    )
+  })
 })

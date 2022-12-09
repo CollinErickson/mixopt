@@ -35,7 +35,9 @@
     # warning("[.mixopt_list doesn't work with multiple indexes")
     class(x) <- "list"
     x <- x[i]
-    class(x) <- "mixopt_list"
+    # class(x) <- "mixopt_list"
+    # This will simplify to numeric/char if possible, allowing math operators
+    x <- as.mixopt_list(x, T)
     return(x)
   }
   if (any(i < 0)) {
@@ -81,10 +83,23 @@ is.mixopt_list <- function(x) {
 #' Coerce to a mixopt_list
 #'
 #' @param x Object
+#' @param simplifyifpossible If possible, should the class be simplified to
+#' numeric or character?
 #' @return Object of class mixopt_list
 #'
 #' @export
-as.mixopt_list <- function(x) {
+as.mixopt_list <- function(x, simplifyifpossible=FALSE) {
+  if (simplifyifpossible && (is.numeric(x) || is.character(x))) {
+    return(x)
+  }
+  if (simplifyifpossible && is.list(x)) {
+    if (all(sapply(x, is.numeric))) {
+      return(unlist(x))
+    }
+    if (all(sapply(x, is.character))) {
+      return(unlist(x))
+    }
+  }
   if ("mixopt_list" %in% class(x)) {
     # Do nothing
   } else {

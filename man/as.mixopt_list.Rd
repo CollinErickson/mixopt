@@ -4,10 +4,13 @@
 \alias{as.mixopt_list}
 \title{Coerce to a mixopt_list}
 \usage{
-as.mixopt_list(x)
+as.mixopt_list(x, simplifyifpossible = FALSE)
 }
 \arguments{
 \item{x}{Object}
+
+\item{simplifyifpossible}{If possible, should the class be simplified to
+numeric or character?}
 }
 \value{
 Object of class mixopt_list

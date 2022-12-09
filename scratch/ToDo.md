@@ -57,6 +57,3 @@ Rosenbrock example from optim doc is a disaster in multistart.
 * Replace coorddesc with blockcd with maxblocksize=1 to avoid repetitive code
 
 * Add control. Use reltol.
-
-* To have math funcs work on mixopt_lists, convert them to numeric when all
-numeric? Can also do that when subsetting if it removes non-numeric.

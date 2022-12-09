@@ -17,8 +17,7 @@
 #' a[2:3]
 #' a[-(2:3)]
 #'
-#' b <- list(1,2,3,4,5)
-#' class(b) <- "mixopt_list"
+#' b <- as.mixopt_list(c(1,2,3,4,5))
 #' sum(b)
 #' b^2
 #' b+b
@@ -62,7 +61,7 @@ if (F) {
 
 #' @export
 print.mixopt_list <- function(x, ...) {
-  cat(" [1]")
+  cat("mixopt_list: [1]")
   for (i in seq_along(x)) {
     cat(" ", x[i], sep='')
   }
@@ -77,6 +76,23 @@ print.mixopt_list <- function(x, ...) {
 #' @export
 is.mixopt_list <- function(x) {
   "mixopt_list" %in% class(x)
+}
+
+#' Coerce to a mixopt_list
+#'
+#' @param x Object
+#' @return Object of class mixopt_list
+#'
+#' @export
+as.mixopt_list <- function(x) {
+  if ("mixopt_list" %in% class(x)) {
+    # Do nothing
+  } else {
+    x <- as.list(x)
+    stopifnot(all(sapply(x, length) == 1))
+    class(x) <- "mixopt_list"
+  }
+  x
 }
 
 #' Combines mixopt_list objects

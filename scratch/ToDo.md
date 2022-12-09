@@ -60,5 +60,3 @@ Rosenbrock example from optim doc is a disaster in multistart.
 
 * To have math funcs work on mixopt_lists, convert them to numeric when all
 numeric? Can also do that when subsetting if it removes non-numeric.
-
-* Fix bad full index line search when start is best.

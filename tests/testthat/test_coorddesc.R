@@ -1,10 +1,22 @@
 library(testthat)
 
-test_that("coorddesc cts", {
+test_that("coorddesc cts 1D list", {
   expect_error(
     {
       cdout <- mixopt_coorddesc(par=list(mopar_cts(2,8)),
-                                fn=function(x) {(4.5-x[[1]])^2})
+                                fn=function(x) {(4.5-x[1])^2})
+    }, NA
+  )
+  expect_equal(length(cdout$par), 1)
+  expect_equal(cdout$par[[1]], 4.5)
+  expect_equal(cdout$val, 0)
+})
+
+test_that("coorddesc cts 1D no list", {
+  expect_error(
+    {
+      cdout <- mixopt_coorddesc(par=mopar_cts(2,8),
+                                fn=function(x) {(4.5-x[1])^2})
     }, NA
   )
   expect_equal(length(cdout$par), 1)

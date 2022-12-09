@@ -26,6 +26,7 @@ a
 a[3]
 a[2:3]
 a[-(2:3)]
+as.data.frame(a)
 
 b <- as.mixopt_list(c(1,2,3,4,5))
 sum(b)

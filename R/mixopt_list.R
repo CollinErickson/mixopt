@@ -16,6 +16,7 @@
 #' a[3]
 #' a[2:3]
 #' a[-(2:3)]
+#' as.data.frame(a)
 #'
 #' b <- as.mixopt_list(c(1,2,3,4,5))
 #' sum(b)
@@ -224,4 +225,11 @@ sum.mixopt_list <- function(..., na.rm=FALSE) {
     out[i] <- e1[min(i, length(e1))] / e2[min(i, length(e2))]
   }
   out
+}
+
+#' @export
+as.data.frame.mixopt_list <- function(x, row.names=NULL, optional=FALSE, ...) {
+  x2 <- as.data.frame.list(x)
+  colnames(x2) <- paste0("X", 1:ncol(x2))
+  x2
 }

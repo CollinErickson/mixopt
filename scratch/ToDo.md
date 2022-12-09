@@ -8,8 +8,6 @@ To do
 
 * Better examples
 
-* Block coorddesc (all cts at once)
-
 * constraints?
 
 * tests: (check codecov to see what tests to add)
@@ -18,8 +16,6 @@ To do
 
 * coorddesc: seems to spend a lot of time not improving at end.
 Rosenbrock example from optim doc is a disaster in multistart.
-
-* set max run time
 
 * add stopping reason (maxeval, maxiter, maxtime, normal)
 
@@ -44,16 +40,10 @@ Rosenbrock example from optim doc is a disaster in multistart.
 
 * Option for multipredict. Use for multistart first stage.
 
-* Use grad for cts
-
 * Use fngr
-
-* Use numeric instead of mixopt_list when all are numeric
 
 * option for matrix/df evaluation. Useful for multistart init points. E.g., EI.
 
 * Need to stop earlier: waiting for 0 improvement is too slow, check what optim does
-
-* Replace coorddesc with blockcd with maxblocksize=1 to avoid repetitive code
 
 * Add control. Use reltol.

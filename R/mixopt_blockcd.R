@@ -34,6 +34,10 @@ mixopt_blockcd <- function(par, fn, gr=NULL, ...,
                            track=FALSE) {
   # print(par)
 
+  # If 1-D, par can just be the par instead of a list of par
+  if ("mixopt_par" %in% class(par)) {
+    par <- list(par)
+  }
   # Verify that par are valid
   verify_par(par)
   if (verbose>=2) {

@@ -47,6 +47,16 @@ mixopt_multistart <- function(par, fn, gr=NULL,
               abs(maxeval - as.integer(maxeval)) < 1e-8)
   }
 
+  # If 1-D, par can just be the par instead of a list of par
+  if ("mixopt_par" %in% class(par)) {
+    par <- list(par)
+  }
+  # Verify that par are valid
+  verify_par(par)
+  if (verbose>=2) {
+    cat("par are verified\n")
+  }
+
   starttime <- Sys.time()
   counts_function <- 0
 

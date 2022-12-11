@@ -41,4 +41,5 @@ c(b, 1)
 c(1, b)
 c(a, b, a)
 c_mixopt_list(0, 1, 2, 3, 4, a, 5, 6, 7, 8, b, 9)
+c_mixopt_list(NULL, 3, NULL, a, NULL, 66666, NULL, b)
 }

@@ -106,10 +106,11 @@ mixopt_multistart <- function(par, fn, gr=NULL,
       par[[ivar]]$start <- startpoints2[[n1_inds[[i]]]][[ivar]]
     }
 
-    # Run local optimizer
+    # Run local optimizer ----
     locoptouts[[i]] <- mixopt_blockcd(
       par=par, fn=fn, gr=gr, track=track,
-      best_val_sofar=if (track) {min(tracked_vals)} else {Inf}
+      best_val_sofar=if (track) {min(tracked_vals)} else {Inf},
+      ...
     )
     counts_function <- counts_function + locoptouts[[i]]$counts[['function']]
     if (track) {

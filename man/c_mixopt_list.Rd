@@ -17,3 +17,7 @@ A combined mixopt_list
 \description{
 Combines mixopt_list objects
 }
+\examples{
+c_mixopt_list(NULL, as.mixopt_list(1:5), NULL, as.mixopt_list(letters[1:5]))
+c_mixopt_list(as.mixopt_list(1:3), NULL)
+}

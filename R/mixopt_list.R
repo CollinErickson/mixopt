@@ -31,6 +31,7 @@
 #' c(1, b)
 #' c(a, b, a)
 #' c_mixopt_list(0, 1, 2, 3, 4, a, 5, 6, 7, 8, b, 9)
+#' c_mixopt_list(NULL, 3, NULL, a, NULL, 66666, NULL, b)
 `[.mixopt_list` <- function(x, i, value) {
   if (length(i) > 1.5) {
     # warning("[.mixopt_list doesn't work with multiple indexes")
@@ -64,6 +65,7 @@ if (F) {
 
 #' @export
 print.mixopt_list <- function(x, ...) {
+  # browser()
   cat("mixopt_list: [1]")
   for (i in seq_along(x)) {
     cat(" ", x[i], sep='')
@@ -119,8 +121,19 @@ as.mixopt_list <- function(x, simplifyifpossible=FALSE) {
 #' @return A combined mixopt_list
 #'
 #' @export
+#' @examples
+#' c_mixopt_list(NULL, as.mixopt_list(1:5), NULL, as.mixopt_list(letters[1:5]))
+#' c_mixopt_list(as.mixopt_list(1:3), NULL)
 c_mixopt_list <- function(x, ...) {
   # browser()
+  if (is.null(x)) { #print('hasnull')
+    dots <- list(...)
+    if (length(dots) == 0) {
+      return(NULL)
+    }
+    return(do.call(c_mixopt_list, dots))
+    # return(c_mixopt_list(...))
+  }
   if (!is.mixopt_list(x)) {
     # browser()
     x <- as.list(x)
@@ -128,7 +141,12 @@ c_mixopt_list <- function(x, ...) {
     # do.call(c, x, ...)
   }
 
-  c(x, ...)
+  dots <- list(...)
+  if (length(dots) > .5) {
+    c(x, ...)
+  } else {
+    c(x)
+  }
 }
 
 #' @export

@@ -34,11 +34,9 @@ Rosenbrock example from optim doc is a disaster in multistart.
 
 * make sure par is valid at end
 
-* If single par, allow input as just mopar, not list.
-
 * optim: first eval reads existing value
 
-* Option for multipredict. Use for multistart first stage.
+* Option for multipredict/batcheval. Use for multistart first stage.
 
 * Use fngr
 
@@ -47,3 +45,9 @@ Rosenbrock example from optim doc is a disaster in multistart.
 * Need to stop earlier: waiting for 0 improvement is too slow, check what optim does
 
 * Add control. Use reltol.
+
+* Clean up mixopt()
+
+* multistart local arg should be used
+
+* mixopt_list_matrix, each row is a mixopt_list, columns are same type

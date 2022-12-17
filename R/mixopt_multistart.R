@@ -3,6 +3,9 @@
 #' @param n1 For multistart, number of best starts to optimize with.
 #' You should have `n0` less than `n1`, potentially by a large factor.
 #' gradient descent.
+#' @param groupeval Can multiple inputs be evaluated at once? This can speed
+#' up greatly for certain circumstances. Use "matrix" to have it give a set
+#' of points as rows of a matrix to all be evaluated at once.
 #'
 #' @references https://www.uv.es/rmarti/paper/docs/multi2.pdf
 #'
@@ -28,9 +31,11 @@
 #'              aes(V1, V2, color=newbest), alpha=.5)
 mixopt_multistart <- function(par, fn, gr=NULL,
                               ..., method,
+                              fngr=NULL,
                               n0=20, n1=2,
                               maxiter=100, maxeval=NULL,
                               verbose=0,
+                              groupeval=FALSE,
                               track=FALSE) {
   # Start by evaluating n0 points, pick them randomly
   stopifnot(is.numeric(n0), length(n0) == 1, n0 >= 1,
@@ -81,13 +86,36 @@ mixopt_multistart <- function(par, fn, gr=NULL,
     startpoints2[[i]] <- lapply(startpoints, function(x) {x[[i]]})
     # class(startpoints2[[i]]) <- c("mixopt_list", class(startpoints2[[i]]))
     startpoints2[[i]] <- as.mixopt_list(startpoints2[[i]], T)
-    startpointsval[[i]] <- fn(startpoints2[[i]])
+  }
+  if (groupeval == "matrix") {
+    # browser()
+    evalmat <- matrix(NA, nrow=n0, ncol=length(par))
+    for (i in 1:n0) {
+      evalmat[i, ] <- startpoints2[[i]]
+    }
+    startpointsval <- fn(evalmat)
+    stopifnot(length(startpointsval) == n0)
     counts_function <- counts_function + 1
     if (track) {
       tracked_pars[[length(tracked_pars) + 1]] <- startpoints2[[i]]
       tracked_vals[[length(tracked_vals) + 1]] <- startpointsval[[i]]
       tracked_newbest[[length(tracked_newbest) + 1]] <- (if (i==1) {T} else {
         startpointsval[[i]] < min(startpointsval[1:(i-1)])})
+    }
+  } else { # No group eval, each separate
+    for (i in 1:n0) {
+      # # Generate start points
+      # startpoints2[[i]] <- lapply(startpoints, function(x) {x[[i]]})
+      # # class(startpoints2[[i]]) <- c("mixopt_list", class(startpoints2[[i]]))
+      # startpoints2[[i]] <- as.mixopt_list(startpoints2[[i]], T)
+      startpointsval[[i]] <- fn(startpoints2[[i]])
+      counts_function <- counts_function + 1
+      if (track) {
+        tracked_pars[[length(tracked_pars) + 1]] <- startpoints2[[i]]
+        tracked_vals[[length(tracked_vals) + 1]] <- startpointsval[[i]]
+        tracked_newbest[[length(tracked_newbest) + 1]] <- (if (i==1) {T} else {
+          startpointsval[[i]] < min(startpointsval[1:(i-1)])})
+      }
     }
   }
 
@@ -110,6 +138,7 @@ mixopt_multistart <- function(par, fn, gr=NULL,
     locoptouts[[i]] <- mixopt_blockcd(
       par=par, fn=fn, gr=gr, track=track,
       best_val_sofar=if (track) {min(tracked_vals)} else {Inf},
+      fngr=fngr,
       ...
     )
     counts_function <- counts_function + locoptouts[[i]]$counts[['function']]

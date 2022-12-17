@@ -13,6 +13,7 @@ Suggests:
     ggplot2,
     gridExtra,
     lhs,
+    splitfngr,
     testthat (>= 3.0.0)
 License: LGPL (>= 3)
 Encoding: UTF-8

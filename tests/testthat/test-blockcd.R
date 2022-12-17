@@ -46,3 +46,30 @@ test_that("blockcd ord and unord", {
     )
   })
 })
+
+test_that("fngr", {
+  d <- 3000
+  fn1 <- function(x) {mean(x^1.34 * log(x) + 1/(x))}
+  # curve(sapply(x, fn), 0, 10)
+  gr1 <- function(x) {(1.34*x^.34 * log(x) + x^1.34 / x -x^-2) / length(x)}
+  # curve(gr, 1, 10, lwd=5)
+  # curve(sapply(x, function(x) {numDeriv::grad(fn, x)}), add=T, col=2, lwd=2)
+  # numDeriv::grad(fn, 1:10)
+  # gr(1:10)
+
+  fngr1 <- function(x) {
+    list(fn=mean(x^1.34 * log(x) + 1/(x)),
+         gr=(1.34*x^.34 * log(x) + x^1.34 / x -x^-2) / length(x)
+    )
+  }
+  # curve(sapply(x, fn), 0, 10)
+
+  parl <- list()
+  for (i in 1:d) {
+    parl[[i]] <- mopar_cts(.1,1000000)
+  }
+  # mixopt_blockcd(parl, fn=fn)
+  expect_no_error(mixopt_blockcd(parl, fn=fn1, gr=gr1))
+  expect_no_error(mixopt_blockcd(parl, fn=fn1, fngr=fngr1))
+  expect_no_error(mixopt_blockcd(parl, fngr=fngr1))
+})

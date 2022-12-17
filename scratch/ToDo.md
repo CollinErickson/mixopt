@@ -36,10 +36,6 @@ Rosenbrock example from optim doc is a disaster in multistart.
 
 * optim: first eval reads existing value
 
-* Option for multipredict/batcheval. Use for multistart first stage.
-
-* Use fngr
-
 * option for matrix/df evaluation. Useful for multistart init points. E.g., EI.
 
 * Need to stop earlier: waiting for 0 improvement is too slow, check what optim does
@@ -51,3 +47,6 @@ Rosenbrock example from optim doc is a disaster in multistart.
 * multistart local arg should be used
 
 * mixopt_list_matrix, each row is a mixopt_list, columns are same type
+
+* as.data.frame works differently on mixopt_list vs after simplified to numeric?
+Need to add class after simplifying so it works properly?

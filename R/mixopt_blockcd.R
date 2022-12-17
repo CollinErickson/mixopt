@@ -6,6 +6,8 @@
 #' @param control Parameters for optimizing.
 #' @param maxblocksize The maximum number of continuous dimensions that should
 #' be placed into a single block.
+#' @param fngr Function that returns the function and gradient value for the
+#' given input as a list with names "fn" and "gr".
 #'
 #' @references https://en.wikipedia.org/wiki/Coordinate_descent
 #'
@@ -28,6 +30,7 @@ mixopt_blockcd <- function(par, fn, gr=NULL, ...,
                            control=list(),
                            maxblocksize=NULL,
                            method,
+                           fngr=NULL,
                            maxiter=100, maxeval=NULL,
                            maxtime=NULL,
                            verbose=0,
@@ -91,7 +94,14 @@ mixopt_blockcd <- function(par, fn, gr=NULL, ...,
   # if (iter == 1 && is.infinite(par_val)) {
   # print("INITIALIZING away from Inf")
   # par_val <- fnipar(par_par[[ipar]])
-  par_val <- fn(par_par)
+  if (!missing(fn) && !is.null(fn)) {
+    par_val <- fn(par_par)
+  } else if (!is.null(fngr)) {
+    par_val <- fngr(par_par)$fn
+  } else {
+    stop("Must give in fn or fngr")
+  }
+  stopifnot(is.numeric(par_val), length(par_val) == 1)
   # }
 
   if (track) {
@@ -215,8 +225,38 @@ mixopt_blockcd <- function(par, fn, gr=NULL, ...,
       if (blockclass[iblock] == "mixopt_par_cts") {
         ## cts ----
         # Use gradient
-        if (is.null(gr)) {
-          gripar=NULL
+        if (!is.null(fngr)) {
+          # browser()
+          fngripar <- function(pari) {
+            x <- par_par
+            x[inds_iblock] <- pari
+            # browser()
+            fngrx <- fngr(x)
+            fnx <- fngrx$fn
+            grxall <- fngrx$gr
+            grx <- grxall[inds_iblock]
+
+            if (verbose >= 10) {
+              if (is.na(pari)) {
+                stop("pari is NA in coorddesc gr")
+              }
+              cat("  iblock=", iblock, " set at ", pari, " grad evaluates to ",
+                  signif(grx, 8), "\n")
+            }
+
+            # counts_function <<- counts_function + 1
+            counts_gradient <<- counts_gradient + 1
+            if (track) {
+              tracked_pars[[length(tracked_pars) + 1]] <<- x
+              tracked_vals[[length(tracked_vals) + 1]] <<- fnx
+              tracked_newbest[[length(tracked_newbest) + 1]] <<-
+                (fnx < best_val_sofar)
+            }
+            list(fn=fnx, gr=grx)
+            # grx
+          }
+        } else if (is.null(gr)) {
+          gripar <- NULL
         } else {
           gripar <- function(pari) {
             x <- par_par
@@ -245,17 +285,33 @@ mixopt_blockcd <- function(par, fn, gr=NULL, ...,
         # Optimize over all cts dims
         control_list <- list()
         if (nblock > 1.5) {control_list$maxit=30}
-        optout <- optim(par=par_par[blockinds[[iblock]]],
-                        fn=fnipar,
-                        gr=gripar,
-                        method="L-BFGS-B",
-                        # lower=par[[ipar]]$lower,
-                        # upper=par[[ipar]]$upper,
-                        lower=sapply(blockinds[[iblock]],
-                                     function(j) {par[[j]]$lower}),
-                        upper=sapply(blockinds[[iblock]],
-                                     function(j) {par[[j]]$upper}),
-                        control=control_list)
+        if (is.null(fngr)) {
+          optout <- optim(par=par_par[blockinds[[iblock]]],
+                          fn=fnipar,
+                          gr=gripar,
+                          method="L-BFGS-B",
+                          # lower=par[[ipar]]$lower,
+                          # upper=par[[ipar]]$upper,
+                          lower=sapply(blockinds[[iblock]],
+                                       function(j) {par[[j]]$lower}),
+                          upper=sapply(blockinds[[iblock]],
+                                       function(j) {par[[j]]$upper}),
+                          control=control_list)
+        } else {
+          optout <- splitfngr::optim_share(
+            par=par_par[blockinds[[iblock]]],
+            # fn=fnipar,
+            # gr=gripar,
+            fngr=fngripar,
+            method="L-BFGS-B",
+            # lower=par[[ipar]]$lower,
+            # upper=par[[ipar]]$upper,
+            lower=sapply(blockinds[[iblock]],
+                         function(j) {par[[j]]$lower}),
+            upper=sapply(blockinds[[iblock]],
+                         function(j) {par[[j]]$upper}),
+            control=control_list)
+        }
 
         par_par[blockinds[[iblock]]] <- optout$par
         par_val <- optout$val

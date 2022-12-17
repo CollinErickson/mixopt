@@ -74,3 +74,21 @@ test_that("func using sum/slice", {
     )
   })
 })
+
+test_that("groupeval", {
+  d <- 3
+  pars <- replicate(d, mopar_cts(1,10), simplify = F)
+  f1 <- function(x) {sum(x^1.6)}
+  fng <- function(x) {
+    if (is.matrix(x)) {
+      apply(x, 1, f1)
+    } else {
+      # Sys.sleep(.0005)
+      f1(x)
+    }
+  }
+  fng(1:3)
+  fng(matrix(1:9, byrow=T, ncol=d))
+  expect_no_error(mixopt_multistart(par=pars, fn=fng, groupeval='matrix'))
+  expect_no_error(mixopt_multistart(par=pars, fn=fng, groupeval=F))
+})

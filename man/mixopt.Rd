@@ -28,6 +28,7 @@ mixopt_blockcd(
   control = list(),
   maxblocksize = NULL,
   method,
+  fngr = NULL,
   maxiter = 100,
   maxeval = NULL,
   maxtime = NULL,
@@ -54,11 +55,13 @@ mixopt_multistart(
   gr = NULL,
   ...,
   method,
+  fngr = NULL,
   n0 = 20,
   n1 = 2,
   maxiter = 100,
   maxeval = NULL,
   verbose = 0,
+  groupeval = FALSE,
   track = FALSE
 )
 }
@@ -88,6 +91,9 @@ mixopt_multistart(
 \item{maxblocksize}{The maximum number of continuous dimensions that should
 be placed into a single block.}
 
+\item{fngr}{Function that returns the function and gradient value for the
+given input as a list with names "fn" and "gr".}
+
 \item{maxiter}{Maximum number of outer iterations.
 For coordinate descent, one iteration is a loop over each parameter.}
 
@@ -103,6 +109,10 @@ checks occasionally.}
 \item{n1}{For multistart, number of best starts to optimize with.
 You should have `n0` less than `n1`, potentially by a large factor.
 gradient descent.}
+
+\item{groupeval}{Can multiple inputs be evaluated at once? This can speed
+up greatly for certain circumstances. Use "matrix" to have it give a set
+of points as rows of a matrix to all be evaluated at once.}
 }
 \value{
 List

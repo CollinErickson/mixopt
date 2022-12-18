@@ -2,6 +2,8 @@
 
 * Added indexing so it can work with standard functions.
 
+* Created `mixopt_blockcd` to do block coordinate descent.
+
 # mixopt 0.1.1
 
 * Fixed two breaking errors in `index_line_search`.

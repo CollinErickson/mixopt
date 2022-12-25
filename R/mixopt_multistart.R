@@ -87,11 +87,33 @@ mixopt_multistart <- function(par, fn, gr=NULL,
     # class(startpoints2[[i]]) <- c("mixopt_list", class(startpoints2[[i]]))
     startpoints2[[i]] <- as.mixopt_list(startpoints2[[i]], T)
   }
-  if (groupeval == "matrix") {
-    # browser()
-    evalmat <- matrix(NA, nrow=n0, ncol=length(par))
-    for (i in 1:n0) {
-      evalmat[i, ] <- startpoints2[[i]]
+  if (!is.null(groupeval) && !(is.logical(groupeval) && !groupeval)) {
+    if (groupeval == "matrix") {
+      evalmat <- matrix(NA, nrow=n0, ncol=length(par))
+      for (i in 1:n0) {
+        evalmat[i, ] <- startpoints2[[i]]
+      }
+      stopifnot(is.matrix(evalmat),
+                nrow(evalmat) == length(startpoints2),
+                ncol(evalmat) == length(startpoints2[[1]]))
+    } else if (groupeval %in% c("data.frame", "df")) {
+      if (is.mixopt_list(startpoints2[[1]])) {
+        evalmat <- dplyr::bind_rows(lapply(startpoints2, as.data.frame))
+      } else {
+        # Has been simplified to numeric/char
+        evalmat <- dplyr::bind_rows(
+          lapply(startpoints2,
+                 function(x) {
+                   as.data.frame(as.list(x),
+                                 col.names=1:length(startpoints2[[1]]))
+                 })
+        )
+      }
+      stopifnot(is.data.frame(evalmat),
+                nrow(evalmat) == length(startpoints2),
+                ncol(evalmat) == length(startpoints2[[1]]))
+    } else {
+      stop("groupeval must be one of 'matrix' or 'data.frame'")
     }
     startpointsval <- fn(evalmat)
     stopifnot(length(startpointsval) == n0)

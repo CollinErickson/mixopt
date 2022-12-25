@@ -75,7 +75,7 @@ test_that("func using sum/slice", {
   })
 })
 
-test_that("groupeval", {
+test_that("groupeval matrix", {
   d <- 3
   pars <- replicate(d, mopar_cts(1,10), simplify = F)
   f1 <- function(x) {sum(x^1.6)}
@@ -91,4 +91,35 @@ test_that("groupeval", {
   fng(matrix(1:9, byrow=T, ncol=d))
   expect_no_error(mixopt_multistart(par=pars, fn=fng, groupeval='matrix'))
   expect_no_error(mixopt_multistart(par=pars, fn=fng, groupeval=F))
+})
+test_that("groupeval df", {
+  # Mixed num/char cols
+  f <- function(x) {
+    if (is.data.frame(x)) {
+      colnames(x) <- c('a', 'b')
+      x$a^2 + ifelse(x$b=='a', 1, 0)
+    } else {
+      x[1]^2 + ifelse(x[2]=='a', 1, 0)
+    }
+  }
+  pars <- c(mopar_cts(-2,2), mopar_unordered(letters[1:4]))
+  expect_no_error(
+    mixopt_multistart(par=pars,
+                      fn=f, groupeval="data.frame")
+  )
+
+  # All num
+  f <- function(x) {
+    if (is.data.frame(x)) {
+      colnames(x) <- c('a', 'b')
+      x$a^2 + x$b
+    } else {
+      x[1]^2 + x[2]
+    }
+  }
+  pars <- c(mopar_cts(-2,2), mopar_cts(3,11))
+  expect_no_error(
+    mixopt_multistart(par=pars,
+                      fn=f, groupeval="data.frame")
+  )
 })

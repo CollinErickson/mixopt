@@ -19,11 +19,6 @@ Rosenbrock example from optim doc is a disaster in multistart.
 
 * add stopping reason (maxeval, maxiter, maxtime, normal)
 
-* index line search
-  - add more prints for verbose
-
-* par: print wraparound for discrete
-
 * check for NA, etc
 
 * Add references, requested by CRAN

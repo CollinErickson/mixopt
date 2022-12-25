@@ -140,7 +140,6 @@ mixopt_blockcd <- function(par, fn, gr=NULL, ...,
       blockinds[[nblock]] <- inds_cts
       blockclass[[nblock]] <- "mixopt_par_cts"
     } else {
-      # browser()
       numctsblocks <- ceiling(length(inds_cts) / floor(maxblocksize))
       stopifnot(numctsblocks >= 1,
                 all.equal(numctsblocks, round(numctsblocks)))
@@ -224,11 +223,9 @@ mixopt_blockcd <- function(par, fn, gr=NULL, ...,
         ## cts ----
         # Use gradient
         if (!is.null(fngr)) {
-          # browser()
           fngripar <- function(pari) {
             x <- par_par
             x[inds_iblock] <- pari
-            # browser()
             fngrx <- fngr(x)
             fnx <- fngrx$fn
             grxall <- fngrx$gr

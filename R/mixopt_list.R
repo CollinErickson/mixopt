@@ -34,10 +34,8 @@
 #' c_mixopt_list(NULL, 3, NULL, a, NULL, 66666, NULL, b)
 `[.mixopt_list` <- function(x, i, value) {
   if (length(i) > 1.5) {
-    # warning("[.mixopt_list doesn't work with multiple indexes")
     class(x) <- "list"
     x <- x[i]
-    # class(x) <- "mixopt_list"
     # This will simplify to numeric/char if possible, allowing math operators
     x <- as.mixopt_list(x, T)
     return(x)
@@ -65,7 +63,6 @@ if (F) {
 
 #' @export
 print.mixopt_list <- function(x, ...) {
-  # browser()
   cat("mixopt_list: [1]")
   for (i in seq_along(x)) {
     cat(" ", x[i], sep='')
@@ -125,8 +122,7 @@ as.mixopt_list <- function(x, simplifyifpossible=FALSE) {
 #' c_mixopt_list(NULL, as.mixopt_list(1:5), NULL, as.mixopt_list(letters[1:5]))
 #' c_mixopt_list(as.mixopt_list(1:3), NULL)
 c_mixopt_list <- function(x, ...) {
-  # browser()
-  if (is.null(x)) { #print('hasnull')
+  if (is.null(x)) {
     dots <- list(...)
     if (length(dots) == 0) {
       return(NULL)
@@ -135,7 +131,6 @@ c_mixopt_list <- function(x, ...) {
     # return(c_mixopt_list(...))
   }
   if (!is.mixopt_list(x)) {
-    # browser()
     x <- as.list(x)
     class(x) <- "mixopt_list"
     # do.call(c, x, ...)
@@ -160,16 +155,9 @@ c.mixopt_list <- function(x, ...) {
       x <- c(x, dots[[i]])
     }
     return(x)
-    # t1 <- c(x, dots[[1]])
-    # dotsleft <- dots[2:]
-    # if (length(dotsleft) == 1) {
-    #   return(c(t1, dotsleft[[1]]))
-    # }
-    # return(do.call(c(t1, dots))
   }
   a <- x
   b <- list(...)[[1]]
-  # browser()
   if (is.mixopt_list(a)) {
     class(a) <- "list"
   } else {

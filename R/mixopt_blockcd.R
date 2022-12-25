@@ -89,25 +89,23 @@ mixopt_blockcd <- function(par, fn, gr=NULL, ...,
   # but only if it can't be kept as numeric/char
   par_par <- as.mixopt_list(par_par, TRUE)
 
+  # If give in fngr and not fn, make fn
+  if (missing(fn)) {
+    if (!is.null(fngr)) {
+      fn <- function(...) {
+        fngr(...)$fn
+      }
+    } else {
+      stop("Must give in fn or fngr")
+    }
+  }
+
   # Evaluate initial parameter if first to evaluated
   # Only problem is that optim will duplicate it
-  # if (iter == 1 && is.infinite(par_val)) {
-  # print("INITIALIZING away from Inf")
-  # par_val <- fnipar(par_par[[ipar]])
-  if (!missing(fn) && !is.null(fn)) {
-    par_val <- fn(par_par)
-  } else if (!is.null(fngr)) {
-    par_val <- fngr(par_par)$fn
-  } else {
-    stop("Must give in fn or fngr")
-  }
+  par_val <- fn(par_par)
   stopifnot(is.numeric(par_val), length(par_val) == 1)
-  # }
 
   if (track) {
-    # tracked_pars <- list()
-    # tracked_vals <- numeric(0)
-    # tracked_newbest <- logical(0)
     tracked_pars <- list(par_par)
     tracked_vals <- par_val
     dots <- list(...)
@@ -206,7 +204,7 @@ mixopt_blockcd <- function(par, fn, gr=NULL, ...,
         fnx <- fn(x)
 
         if (verbose >= 10) {
-          if (is.na(pari)) {
+          if (any(is.na(pari))) {
             stop("pari is NA in coorddesc")
           }
           cat("  iblock=", iblock, " set at ", pari, " evaluates to ",
@@ -237,7 +235,7 @@ mixopt_blockcd <- function(par, fn, gr=NULL, ...,
             grx <- grxall[inds_iblock]
 
             if (verbose >= 10) {
-              if (is.na(pari)) {
+              if (any(is.na(pari))) {
                 stop("pari is NA in coorddesc gr")
               }
               cat("  iblock=", iblock, " set at ", pari, " grad evaluates to ",
@@ -265,7 +263,7 @@ mixopt_blockcd <- function(par, fn, gr=NULL, ...,
             grx <- grxall[inds_iblock]
 
             if (verbose >= 10) {
-              if (is.na(pari)) {
+              if (any(is.na(pari))) {
                 stop("pari is NA in coorddesc gr")
               }
               cat("  iblock=", iblock, " set at ", pari, " grad evaluates to ",
@@ -285,33 +283,30 @@ mixopt_blockcd <- function(par, fn, gr=NULL, ...,
         # Optimize over all cts dims
         control_list <- list()
         if (nblock > 1.5) {control_list$maxit=30}
+        lower_iblock <- sapply(blockinds[[iblock]],
+                               function(j) {par[[j]]$lower})
+        upper_iblock <- sapply(blockinds[[iblock]],
+                               function(j) {par[[j]]$upper})
+        ## optim ----
         if (is.null(fngr)) {
           optout <- optim(par=par_par[blockinds[[iblock]]],
                           fn=fnipar,
                           gr=gripar,
                           method="L-BFGS-B",
-                          # lower=par[[ipar]]$lower,
-                          # upper=par[[ipar]]$upper,
-                          lower=sapply(blockinds[[iblock]],
-                                       function(j) {par[[j]]$lower}),
-                          upper=sapply(blockinds[[iblock]],
-                                       function(j) {par[[j]]$upper}),
+                          lower=lower_iblock,
+                          upper=upper_iblock,
                           control=control_list)
         } else {
           optout <- splitfngr::optim_share(
             par=par_par[blockinds[[iblock]]],
-            # fn=fnipar,
-            # gr=gripar,
             fngr=fngripar,
             method="L-BFGS-B",
-            # lower=par[[ipar]]$lower,
-            # upper=par[[ipar]]$upper,
-            lower=sapply(blockinds[[iblock]],
-                         function(j) {par[[j]]$lower}),
-            upper=sapply(blockinds[[iblock]],
-                         function(j) {par[[j]]$upper}),
+            lower=lower_iblock,
+            upper=upper_iblock,
             control=control_list)
         }
+        # Occasionally optim exceeds lower/upper by 1e-16
+        optout$par <- pmin(pmax(optout$par, lower_iblock), upper_iblock)
 
         par_par[blockinds[[iblock]]] <- optout$par
         par_val <- optout$val

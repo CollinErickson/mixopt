@@ -4,6 +4,9 @@ test_that("mixopt_list works", {
   expect_no_error({
     a <- list(1,4,'c', 'g')
     class(a) <- "mixopt_list"
+    b <- as.mixopt_list(c(1,2,3,4,5))
+  })
+  expect_no_error({
     a
     a[3]
     a[2:3]
@@ -11,7 +14,8 @@ test_that("mixopt_list works", {
     as.data.frame(a)
     print(a)
 
-    b <- as.mixopt_list(c(1,2,3,4,5))
+    b[3:4]
+    b[-(3:4)]
     sum(b)
     b^2
     b+b
@@ -28,4 +32,14 @@ test_that("mixopt_list works", {
     print(b)
     print(c(a, b))
   })
+  expect_error(a[c(2, -3)])
+  expect_null(c_mixopt_list(NULL))
+  expect_equal(a, c_mixopt_list(a))
+})
+
+test_that("Converts num/char back", {
+  expect_no_error(d <- as.mixopt_list(letters, T))
+  expect_equal(class(d), "character")
+  expect_no_error(d <- as.mixopt_list(as.list(letters), T))
+  expect_equal(class(d), "character")
 })

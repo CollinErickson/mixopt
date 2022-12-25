@@ -50,3 +50,5 @@ Rosenbrock example from optim doc is a disaster in multistart.
 
 * as.data.frame works differently on mixopt_list vs after simplified to numeric?
 Need to add class after simplifying so it works properly?
+
+* multistart pass fn0 to blockcd

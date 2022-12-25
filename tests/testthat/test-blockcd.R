@@ -70,6 +70,46 @@ test_that("fngr", {
   }
   # mixopt_blockcd(parl, fn=fn)
   expect_no_error(mixopt_blockcd(parl, fn=fn1, gr=gr1))
-  expect_no_error(mixopt_blockcd(parl, fn=fn1, fngr=fngr1))
+  expect_no_error(mixopt_blockcd(parl, fn=fn1, fngr=fngr1, maxblocksize=1000))
   expect_no_error(mixopt_blockcd(parl, fngr=fngr1))
+  # Error if neither fn/fngr
+  expect_error(mixopt_blockcd(parl, gr=gr1))
+})
+
+test_that("fngr2, smaller dim", {
+  d <- 10
+  fn1 <- function(x) {mean(x^1.34 * log(x) + 1/(x))}
+  gr1 <- function(x) {(1.34*x^.34 * log(x) + x^1.34 / x -x^-2) / length(x)}
+  fngr1 <- function(x) {
+    list(fn=mean(x^1.34 * log(x) + 1/(x)),
+         gr=(1.34*x^.34 * log(x) + x^1.34 / x -x^-2) / length(x)
+    )
+  }
+
+  parl <- list()
+  for (i in 1:d) {
+    if (i %% 3 == 0) {
+      parl[[i]] <- mopar_cts(.1,1000000)
+    } else if (i %% 3 == 1) {
+      parl[[i]] <- mopar_ordered(seq(.1,1000000,l=1e4))
+    } else {
+      parl[[i]] <- mopar_unordered(seq(.1,1000000,l=1e4))
+    }
+  }
+  # mixopt_blockcd(parl, fn=fn)
+  expect_no_error(capture.output(mixopt_blockcd(parl, fn=fn1, gr=gr1,
+                                                verbose=1e9, track=T)))
+  expect_no_error(capture.output(mixopt_blockcd(parl, fn=fn1, fngr=fngr1,
+                                                verbose=1e9, track=T)))
+  expect_no_error(capture.output(mixopt_blockcd(parl, fngr=fngr1, verbose=1e9)))
+})
+
+
+# Errors ----
+test_that("errors", {
+  # Bad reltol
+  expect_error(mixopt_blockcd(par=mopar_cts(1,4), fn=function(x) {x},
+                              control=list(reltol=1:5)))
+  # Neither fn or fngr
+  expect_error(mixopt_blockcd(par=mopar_cts(1,4)))
 })

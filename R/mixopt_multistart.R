@@ -44,6 +44,14 @@ mixopt_multistart <- function(par, fn, gr=NULL,
             abs(n1 - as.integer(n1)) < 1e-8)
   stopifnot(n0 >= n1)
 
+  # Can only give in fngr, but need to make fn
+  if (missing(fn) || is.null(fn)) {
+    stopifnot(!is.null(fngr), is.function(fngr))
+    fn <- function(...) {
+      fngr(...)$fn
+    }
+  }
+
   # Fix maxeval
   if (missing(maxeval) || is.null(maxeval)) {
     maxeval <- Inf

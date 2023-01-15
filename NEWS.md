@@ -1,8 +1,10 @@
-# mixopt 0.1.1.9000
+# mixopt 0.1.2
 
 * Added indexing so it can work with standard functions.
 
 * Created `mixopt_blockcd` to do block coordinate descent.
+
+* Added fngr (evaluate function and gradient simultaneously) option.
 
 # mixopt 0.1.1
 

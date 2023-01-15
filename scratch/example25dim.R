@@ -3,16 +3,6 @@ evals <- 0
 flb <- function(x){
   evals <<- evals + 1
   p <- length(x)
-  # browser()
-  # print(x)
-  # print(class(x))
-  # print(x+1)
-  # print(x[1])
-  # print('p3')
-  # print( c(1, x[-p])^2)
-  # print('p4')
-  # print( (x - c(1, x[-p])^2))
-  # sum(c(1, rep(4, p-1)) * (x - c_mixopt_list(1, x[-p])^2)^2)
   sum(c(1, rep(4, p-1)) * (x - c(1, x[-p])^2)^2)
 }
 ## 25-dimensional box constrained

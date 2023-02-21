@@ -1,8 +1,12 @@
 To do
 
-* Global optimizer: multistart, GP, genetic/evolution
-
+* Global optimizers:
+  * genetic/evolution
+  * simulated annealing
   * GP: fit. Run EI. Avoid infinite loop.
+  * eagle (https://sigmaland.ir/wp-content/uploads/2021/12/Sigmaland-Golden-eagle-optimizer-A-nature-inspired-metaheuristic-algorithm.pdf)
+  * particle swarm
+  * ant colony
 
 * README
 

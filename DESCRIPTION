@@ -7,18 +7,19 @@ Maintainer: Collin Erickson <collinberickson@gmail.com>
 Description: Mixed variable optimization for non-linear functions.
     Can optimize function whose inputs are a combination of continuous,
     ordered, and unordered variables.
-Suggests:
-    ContourFunctions,
+Depends:
     dplyr,
     ggplot2,
+    splitfngr
+Suggests:
+    ContourFunctions,
     gridExtra,
     lhs,
-    splitfngr,
     testthat (>= 3.0.0)
 License: LGPL (>= 3)
 Encoding: UTF-8
 LazyData: true
 URL: https://github.com/CollinErickson/mixopt
 BugReports: https://github.com/CollinErickson/mixopt/issues
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.1
 Config/testthat/edition: 3

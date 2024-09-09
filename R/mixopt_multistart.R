@@ -8,6 +8,7 @@
 #' of points as rows of a matrix to all be evaluated at once.
 #'
 #' @references https://www.uv.es/rmarti/paper/docs/multi2.pdf
+#' @importFrom dplyr bind_rows
 #'
 #' @export
 #' @examples
@@ -16,19 +17,24 @@
 #' library(dplyr)
 #' f6 <- function(x) {-(-x[1]*.5*sin(.5*x[1])*1 - 1e-2*x[2]^2 +
 #'                        .2*x[1] - .3*x[2])}
-#' ContourFunctions::cf_func(f6, xlim=c(0,100), ylim=c(-100,100))
+#'
+#' if (requireNamespace("ContourFunctions", quietly = TRUE)) {
+#'   ContourFunctions::cf_func(f6, xlim=c(0,100), ylim=c(-100,100))
+#' }
 #' m6 <- mixopt_coorddesc(par=list(mopar_cts(0,100), mopar_cts(-100,100)),
 #'                        fn=f6, track = TRUE)
 #' plot_track(m6)
 #' ms6 <- mixopt_multistart(par=list(mopar_cts(0,100), mopar_cts(-100,100)),
 #'                          fn=f6, track = TRUE)
 #' plot_track(ms6)
-#' ContourFunctions::cf_func(f6, xlim=c(0,100), ylim=c(-100,100),
-#'                           gg = TRUE) +
-#'   geom_point(data=as.data.frame(matrix(unlist(ms6$track$par),
-#'                                        ncol=2, byrow=TRUE)) %>%
-#'                bind_cols(newbest=ms6$track$newbest),
-#'              aes(V1, V2, color=newbest), alpha=.5)
+#' if (requireNamespace("ContourFunctions", quietly = TRUE)) {
+#'   ContourFunctions::cf_func(f6, xlim=c(0,100), ylim=c(-100,100),
+#'                             gg = TRUE) +
+#'     geom_point(data=as.data.frame(matrix(unlist(ms6$track$par),
+#'                                          ncol=2, byrow=TRUE)) %>%
+#'                  bind_cols(newbest=ms6$track$newbest),
+#'                aes(V1, V2, color=newbest), alpha=.5)
+#' }
 mixopt_multistart <- function(par, fn, gr=NULL,
                               ..., method,
                               fngr=NULL,
@@ -81,7 +87,19 @@ mixopt_multistart <- function(par, fn, gr=NULL,
 
   startpoints <- list()
   startpointslhs <- list()
-  lhsq <- lhs::maximinLHS(n=n0, k=length(par))
+  if (requireNamespace("lhs", quietly = TRUE)) {
+    lhsq <- lhs::maximinLHS(n=n0, k=length(par))
+  } else {
+    warning("lhs package not available, using worse option. Please install lhs.")
+    # Increasing lhs
+    lhsq <- (matrix(data=1:n0, byrow=F, nrow=n0, ncol=length(par)) - 1 +
+               matrix(data=runif(n0*length(par)), nrow=n0, ncol=length(par))
+    ) / n0
+    # Randomize each column
+    for (i in 1:length(par)) {
+      lhsq[, i] <- lhsq[sample(1:n0, n0, replace=F), i]
+    }
+  }
   for (ivar in 1:length(par)) {
     startpoints[[ivar]] <- par[[ivar]]$sample(n0)
     startpointslhs[[ivar]] <- par[[ivar]]$q(lhsq[, ivar])

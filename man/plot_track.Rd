@@ -17,17 +17,21 @@ Plot the tracked parameters from an optimization
 }
 \examples{
 f8 <- function(x) {-(x[[1]]+x[[2]]) + .1*(x[[1]] - x[[2]])^2}
-ContourFunctions::cf_func(f8, xlim=c(0,100), ylim=c(0,100))
+if (requireNamespace("ContourFunctions", quietly = TRUE)) {
+  ContourFunctions::cf_func(f8, xlim=c(0,100), ylim=c(0,100))
+}
 m8 <- mixopt_coorddesc(par=list(mopar_ordered(0:100), mopar_ordered(0:100)),
                        fn=f8, track = TRUE)
 plot_track(m8)
 
 library(ggplot2)
 library(dplyr)
-ContourFunctions::cf_func(f8, xlim=c(0,100), ylim=c(0,100),
-                          gg = TRUE) +
-  geom_point(data=as.data.frame(matrix(unlist(m8$track$par),
-                                ncol=2, byrow=TRUE)) \%>\%
-                    bind_cols(newbest=m8$track$newbest),
-             aes(V1, V2, color=newbest))
+if (requireNamespace("ContourFunctions", quietly = TRUE)) {
+  ContourFunctions::cf_func(f8, xlim=c(0,100), ylim=c(0,100),
+                            gg = TRUE) +
+    geom_point(data=as.data.frame(matrix(unlist(m8$track$par),
+                                  ncol=2, byrow=TRUE)) \%>\%
+                      bind_cols(newbest=m8$track$newbest),
+               aes(V1, V2, color=newbest))
+}
 }

@@ -10,6 +10,7 @@
 #' given input as a list with names "fn" and "gr".
 #'
 #' @references https://en.wikipedia.org/wiki/Coordinate_descent
+#' @importFrom splitfngr optim_share
 #'
 #' @examples
 #' # Simple 1D example

@@ -151,19 +151,24 @@ library(ggplot2)
 library(dplyr)
 f6 <- function(x) {-(-x[1]*.5*sin(.5*x[1])*1 - 1e-2*x[2]^2 +
                        .2*x[1] - .3*x[2])}
-ContourFunctions::cf_func(f6, xlim=c(0,100), ylim=c(-100,100))
+
+if (requireNamespace("ContourFunctions", quietly = TRUE)) {
+  ContourFunctions::cf_func(f6, xlim=c(0,100), ylim=c(-100,100))
+}
 m6 <- mixopt_coorddesc(par=list(mopar_cts(0,100), mopar_cts(-100,100)),
                        fn=f6, track = TRUE)
 plot_track(m6)
 ms6 <- mixopt_multistart(par=list(mopar_cts(0,100), mopar_cts(-100,100)),
                          fn=f6, track = TRUE)
 plot_track(ms6)
-ContourFunctions::cf_func(f6, xlim=c(0,100), ylim=c(-100,100),
-                          gg = TRUE) +
-  geom_point(data=as.data.frame(matrix(unlist(ms6$track$par),
-                                       ncol=2, byrow=TRUE)) \%>\%
-               bind_cols(newbest=ms6$track$newbest),
-             aes(V1, V2, color=newbest), alpha=.5)
+if (requireNamespace("ContourFunctions", quietly = TRUE)) {
+  ContourFunctions::cf_func(f6, xlim=c(0,100), ylim=c(-100,100),
+                            gg = TRUE) +
+    geom_point(data=as.data.frame(matrix(unlist(ms6$track$par),
+                                         ncol=2, byrow=TRUE)) \%>\%
+                 bind_cols(newbest=ms6$track$newbest),
+               aes(V1, V2, color=newbest), alpha=.5)
+}
 }
 \references{
 https://en.wikipedia.org/wiki/Coordinate_descent

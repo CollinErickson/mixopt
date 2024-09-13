@@ -1,8 +1,12 @@
-I have made some minor changes to the functions within the package.
+I received an email from Brian Ripley on 8/27 that I needed to fix this package.
+One of my other packages, ContourFunctions, had been removed from CRAN,
+and this package was failing noSuggests. I have resubmitted ContourFunctions.
+I fixed this package so that everything in Suggests was moved to Depends
+or is only used within requireNamespace.
 
 ## Test environments
 
-- local Windows 11, R 4.2.2
+- local Windows 11, R 4.4.1
 - R-hub: Fedora, Ubuntu, Windows
 - Ubuntu 20.04.1 via GitHub Actions
 - Win Builder
@@ -10,14 +14,17 @@ I have made some minor changes to the functions within the package.
 
 ## R CMD check results
 
-Local Windows 11, R 4.2.2 (1/13/23):
+Local Windows 11, R 4.4.1 (9/11/24):
 
   0 errors ✔ | 0 warnings ✔ | 0 notes ✔
 
-macOS builder, R 4.2.1 (1/13/23):
+macOS builder, R 4.4.0 (9/11/24):
   OK
 
-Win builder (devel 1/13/23, release 1/15/23):
+Win builder - devel (9/11/24):
+  1 NOTE, archived package
+
+Win builder - release (1/15/23):
   OK
 
 R-Hub Windows Server (1/14/23):

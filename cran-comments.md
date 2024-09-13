@@ -27,6 +27,9 @@ Win builder - devel (9/11/24):
 Win builder - release (1/15/23):
   OK
 
+GitHub actions - Ubuntu 22.04.4, R 4.4..1 (9/12/24):
+  OK
+
 R-Hub Windows Server (1/14/23):
   OK
 

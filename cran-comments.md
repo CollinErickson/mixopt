@@ -7,7 +7,7 @@ or is only used within requireNamespace.
 ## Test environments
 
 - local Windows 11, R 4.4.1
-- R-hub: Fedora, Ubuntu, Windows
+- R-hub: atlas, ubuntu-next, linux (R-devel), macos (R-devel), windows (R-devel)
 - Ubuntu 20.04.1 via GitHub Actions
 - Win Builder
 - macOS builder
@@ -24,21 +24,26 @@ macOS builder, R 4.4.0 (9/11/24):
 Win builder - devel (9/11/24):
   1 NOTE, archived package
 
-Win builder - release (1/15/23):
+Win builder - release (9/12/24):
+  1 NOTE, archived package
+
+GitHub actions - Ubuntu 22.04.4, R 4.4.1 (9/12/24):
   OK
 
-GitHub actions - Ubuntu 22.04.4, R 4.4..1 (9/12/24):
+R-Hub linux/atlas, Ubuntu 22.04.4 (9/12/23):
   OK
 
-R-Hub Windows Server (1/14/23):
+R-Hub linux/ubuntu-next, Ubuntu 22.04.4 (9/12/23):
   OK
 
-R-Hub Ubuntu (1/14/23):
-  NOTE for a slow example
+R-Hub linux (R-devel), Ubuntu 22.04.4 (9/12/23):
+  OK
 
-R-Hub Fedora Linux (1/14/23):
-  Note for two slow examples
+R-Hub macos (R-devel), MacOS 13.6.9 (9/12/23):
+  OK
 
+R-Hub windows (R-devel), Microsoft Windows Server 2022 (9/12/23):
+  OK
 
 ## Downstream dependencies
 

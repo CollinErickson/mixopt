@@ -1,6 +1,10 @@
+# mixopt 0.1.3.9000
+
 # mixopt 0.1.3
 
 * Fixed Suggests issue to stay on CRAN.
+
+* Accepted to CRAN on 9/15/24.
 
 # mixopt 0.1.2
 

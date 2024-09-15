@@ -90,7 +90,7 @@ mixopt_multistart <- function(par, fn, gr=NULL,
   if (requireNamespace("lhs", quietly = TRUE)) {
     lhsq <- lhs::maximinLHS(n=n0, k=length(par))
   } else {
-    warning("lhs package not available, using worse option. Please install lhs.")
+    message("lhs package not available, using worse option. Please install lhs.")
     # Increasing lhs
     lhsq <- (matrix(data=1:n0, byrow=F, nrow=n0, ncol=length(par)) - 1 +
                matrix(data=runif(n0*length(par)), nrow=n0, ncol=length(par))

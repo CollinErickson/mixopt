@@ -1,6 +1,4 @@
-# mixopt 0.1.4
-
-Fixed Suggests to get back on CRAN.
+# mixopt 0.1.3.9000
 
 # mixopt 0.1.3
 

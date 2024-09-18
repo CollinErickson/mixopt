@@ -1,6 +1,6 @@
 I received an email from Brian Ripley on 8/27 that I needed to fix this package.
 One of my other packages, ContourFunctions, had been removed from CRAN,
-and this package was failing noSuggests. I have resubmitted ContourFunctions.
+also for failing noSuggests. I have resubmitted ContourFunctions.
 I fixed this package so that everything in Suggests was moved to Depends
 or is only used within requireNamespace.
 
